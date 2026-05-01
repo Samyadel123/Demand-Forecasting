@@ -1,0 +1,66 @@
+# ──────────────────────────────────────────────────────────────
+# cleaning_config.yaml
+# Configuration for the demand-forecasting cleaning pipeline.
+# All paths are relative to the project root unless absolute.
+# ──────────────────────────────────────────────────────────────
+
+spark:
+  app_name: "DemandForecastingCleaner"
+  master: "local[*]"           # override to spark://master:7077 in cluster
+  log_level: "WARN"
+  config:
+    spark.sql.shuffle.partitions: "8"
+    spark.driver.memory: "2g"
+
+data:
+  # MinIO / S3 source  (used when source = "minio")
+  minio:
+    endpoint: "http://localhost:9000"
+    access_key: "minioadmin"
+    secret_key: "minioadmin"
+    bucket: "raw"
+    object_key: "Historical Product Demand.csv"
+
+  # Local filesystem fallback  (used when source = "local")
+  local:
+    raw_path: "data/raw/Historical Product Demand.csv"
+    processed_path: "data/processed/demand_cleaned"
+
+  # Choose "minio" or "local"
+  source: "minio"
+  output_format: "parquet"     # parquet | csv | delta
+
+schema:
+  columns:
+    - name: "Product_Code"
+      dtype: "string"
+    - name: "Warehouse"
+      dtype: "string"
+    - name: "Product_Category"
+      dtype: "string"
+    - name: "Date"
+      dtype: "string"          # parsed to date during cleaning
+    - name: "Order_Demand"
+      dtype: "string"          # raw has parenthesised negatives → cast to long
+
+cleaning:
+  date_formats:
+    - "yyyy/MM/dd"
+    - "MM/dd/yyyy"
+    - "yyyy-MM-dd"
+
+  # Rows where Order_Demand, after casting, falls in these ranges are treated
+  # as outliers and flagged (not dropped) so downstream models can decide.
+  outlier:
+    strategy: "iqr"            # iqr | zscore
+    iqr_multiplier: 3.0        # conservative — demand is naturally right-skewed
+    zscore_threshold: 4.0
+
+  # Products with fewer than this many records are flagged as "sparse"
+  min_records_per_product: 10
+
+  # Fill strategy for missing demand after all repairs: "zero" | "drop" | "median"
+  null_demand_strategy: "drop"
+
+logging:
+  path: "logs/cleaning_pipeline.log"
