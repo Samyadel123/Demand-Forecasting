@@ -110,3 +110,14 @@ services:
     depends_on:
       - minio
       - spark-master
+
+ 
+volumes:
+  minio_data:
+    driver: local
+  kaggle_data:
+    driver: local
+ 
+networks:
+  minio_net:
+    driver: bridge
