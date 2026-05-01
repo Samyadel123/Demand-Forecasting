@@ -1,0 +1,112 @@
+version: "3.8"
+ 
+services:
+ 
+  # ─────────────────────────────────────────────
+  # MinIO  — S3-compatible object storage
+  # ─────────────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web console
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - minio_net
+ 
+  # ─────────────────────────────────────────────
+  # mc (MinIO Client)  — one-shot init container
+  # Creates the "raw" bucket and loads the
+  # Kaggle dataset via the Kaggle CLI.
+  # ─────────────────────────────────────────────
+  mc:
+    image: minio/mc:latest
+    container_name: mc_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      KAGGLE_USERNAME: ${KAGGLE_USERNAME}
+      KAGGLE_KEY: ${KAGGLE_KEY}
+    volumes:
+      - ./scripts/init.sh:/init.sh:ro
+    entrypoint: ["/bin/sh", "/init.sh"]
+    networks:
+      - minio_net
+ 
+  # ─────────────────────────────────────────────
+  # Kaggle downloader — dedicated service that
+  # downloads the dataset and uploads to MinIO.
+  # Runs once on startup (restart: on-failure
+  # lets it retry if MinIO isn't ready yet).
+  # ─────────────────────────────────────────────
+  kaggle_loader:
+    image: python:3.11-slim
+    container_name: kaggle_loader
+    restart: on-failure
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_ENDPOINT: http://minio:9000
+      KAGGLE_USERNAME: ${KAGGLE_USERNAME}
+      KAGGLE_KEY: ${KAGGLE_KEY}
+      DATASET_SLUG: felixzhao/productdemandforecasting
+      BUCKET_NAME: raw
+    volumes:
+      - ./scripts/load_dataset.py:/load_dataset.py:ro
+      - kaggle_data:/tmp/kaggle
+    command: >
+      bash -c "pip install --quiet kaggle boto3 &&
+               python /load_dataset.py"
+    networks:
+      - minio_net
+  # 2. Spark Master Node
+  spark-master:
+    image: bitnami/spark:3.5
+    container_name: spark_master
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "8080:8080"   # Spark Web UI
+      - "7077:7077"   # Spark Master URL
+
+  # 3. Spark Worker Node (Scale this up later if needed)
+  spark-worker:
+    image: bitnami/spark:3.5
+    container_name: spark_worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+
+  # 4. Workspace for EDA & Modeling
+  jupyter:
+    image: jupyter/pyspark-notebook:latest
+    container_name: jupyter_workspace
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/home/jovyan/work/notebooks
+      - ./src:/home/jovyan/work/src
+    depends_on:
+      - minio
+      - spark-master
