@@ -34,6 +34,7 @@ from src.processing.cleaner import clean
 
 # ─── Logging setup ────────────────────────────────────────────────────────────
 
+
 def _setup_logging(log_path: str | None = None) -> None:
     handlers: list[logging.Handler] = [logging.StreamHandler(sys.stdout)]
     if log_path:
@@ -52,6 +53,7 @@ logger = logging.getLogger(__name__)
 
 # ─── Config loader ────────────────────────────────────────────────────────────
 
+
 def load_config(config_path: str) -> dict:
     with open(config_path, "r") as f:
         cfg = yaml.safe_load(f)
@@ -60,6 +62,7 @@ def load_config(config_path: str) -> dict:
 
 
 # ─── SparkSession factory ─────────────────────────────────────────────────────
+
 
 def build_spark_session(cfg: dict):
     """
@@ -72,15 +75,14 @@ def build_spark_session(cfg: dict):
     app_name = spark_cfg.get("app_name", "DemandForecastingCleaner")
     master = spark_cfg.get("master", "local[*]")
 
-    builder = (
-        SparkSession.builder
-        .appName(app_name)
-        .master(master)
-    )
+    builder = SparkSession.builder.appName(app_name).master(master)
 
     # Apply extra Spark config keys
     for key, value in spark_cfg.get("config", {}).items():
         builder = builder.config(key, str(value))
+
+    # Fix Spark 3.0+ date parsing issues for single-digit months/days
+    builder = builder.config("spark.sql.legacy.timeParserPolicy", "LEGACY")
 
     # S3A JARs — required for MinIO access; harmless in local mode
     if cfg["data"]["source"] == "minio":
@@ -88,6 +90,29 @@ def build_spark_session(cfg: dict):
             "spark.jars.packages",
             "org.apache.hadoop:hadoop-aws:3.3.4,"
             "com.amazonaws:aws-java-sdk-bundle:1.12.262",
+        )
+        # Inject Hadoop S3A configurations via Spark properties (spark.hadoop.*)
+        # This ensures they are available immediately when the FileSystem is first accessed.
+        # We prioritize environment variables (common in Docker) over the YAML config.
+        import os
+
+        minio_cfg = cfg["data"]["minio"]
+        endpoint = os.environ.get("MINIO_ENDPOINT", minio_cfg["endpoint"])
+        access_key = os.environ.get("MINIO_ROOT_USER", minio_cfg["access_key"])
+        secret_key = os.environ.get("MINIO_ROOT_PASSWORD", minio_cfg["secret_key"])
+
+        builder = (
+            builder
+            .config("spark.hadoop.fs.s3a.endpoint", endpoint)
+            .config("spark.hadoop.fs.s3a.access.key", access_key)
+            .config("spark.hadoop.fs.s3a.secret.key", secret_key)
+            .config("spark.hadoop.fs.s3a.path.style.access", "true")
+            .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
+            .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+            # Override potential "60s" defaults with integer milliseconds
+            .config("spark.hadoop.fs.s3a.connection.timeout", "60000")
+            .config("spark.hadoop.fs.s3a.connection.establish.timeout", "60000")
+            .config("spark.hadoop.fs.s3a.threads.keepalivetime", "60")
         )
 
     spark = builder.getOrCreate()
@@ -97,6 +122,7 @@ def build_spark_session(cfg: dict):
 
 
 # ─── CLI ─────────────────────────────────────────────────────────────────────
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -124,7 +150,12 @@ def parse_args() -> argparse.Namespace:
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
-def run(config_path: str, source_override: str | None = None, fmt_override: str | None = None) -> None:
+
+def run(
+    config_path: str,
+    source_override: str | None = None,
+    fmt_override: str | None = None,
+) -> None:
     cfg = load_config(config_path)
     _setup_logging(cfg.get("logging", {}).get("path"))
 
@@ -170,3 +201,4 @@ if __name__ == "__main__":
         source_override=args.source,
         fmt_override=args.output_format,
     )
+

@@ -29,6 +29,12 @@ def _configure_s3a(spark: SparkSession, endpoint: str, access_key: str, secret_k
     hadoop_conf.set("fs.s3a.path.style.access", "true")
     hadoop_conf.set("fs.s3a.connection.ssl.enabled", "false")
     hadoop_conf.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+
+    # Explicitly set timeouts as integers (milliseconds) to avoid "60s" NumberFormatException
+    # seen in some Spark/Hadoop versions.
+    hadoop_conf.set("fs.s3a.connection.timeout", "60000")
+    hadoop_conf.set("fs.s3a.connection.establish.timeout", "60000")
+
     logger.debug("S3A configuration applied for endpoint=%s", endpoint)
 
 
@@ -63,8 +69,6 @@ def read_from_minio(
     -------
     Raw Spark DataFrame.
     """
-    _configure_s3a(spark, endpoint, access_key, secret_key)
-
     s3_path = f"s3a://{bucket}/{object_key}"
     logger.info("Reading from MinIO: %s", s3_path)
 

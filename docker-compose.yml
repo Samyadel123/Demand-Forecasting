@@ -56,9 +56,11 @@ services:
   # lets it retry if MinIO isn't ready yet).
   # ─────────────────────────────────────────────
   kaggle_loader:
-    image: python:3.11-slim
+    image: python:3.11-bookworm
     container_name: kaggle_loader
     restart: on-failure
+    env_file:
+      - .env
     depends_on:
       minio:
         condition: service_healthy
@@ -74,29 +76,33 @@ services:
       - ./scripts/load_dataset.py:/load_dataset.py:ro
       - kaggle_data:/tmp/kaggle
     command: >
-      bash -c "pip install --quiet kaggle boto3 &&
+      bash -c "python -m pip install --quiet --no-cache-dir kaggle boto3 python-dotenv &&
                python /load_dataset.py"
     networks:
       - minio_net
   # 2. Spark Master Node
   spark-master:
-    image: bitnami/spark:3.5
+    image: bitnamilegacy/spark:3.5.1-debian-12-r8
     container_name: spark_master
     environment:
       - SPARK_MODE=master
     ports:
       - "8080:8080"   # Spark Web UI
       - "7077:7077"   # Spark Master URL
+    networks:
+      - minio_net
 
   # 3. Spark Worker Node (Scale this up later if needed)
   spark-worker:
-    image: bitnami/spark:3.5
+    image: bitnamilegacy/spark:3.5.1-debian-12-r8
     container_name: spark_worker
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark-master:7077
     depends_on:
       - spark-master
+    networks:
+      - minio_net
 
   # 4. Workspace for EDA & Modeling
   jupyter:
@@ -107,9 +113,41 @@ services:
     volumes:
       - ./notebooks:/home/jovyan/work/notebooks
       - ./src:/home/jovyan/work/src
+      - jupyter_ivy_cache:/home/jovyan/.ivy2/cache
     depends_on:
       - minio
       - spark-master
+    networks:
+      - minio_net
+
+  pipeline_runner:
+    image: demand-forecasting-pipeline:latest
+    container_name: pipeline_runner
+    profiles: ["tool"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/.venv
+      - spark_ivy_cache:/root/.ivy2.5.2/cache
+    env_file:
+      - .env
+    environment:
+      # Tells Python where to look for your modules (infrastructure, processing, etc.)
+      - PYTHONPATH=/app
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin}
+      - PATH=/app/.venv/bin:$PATH
+    networks:
+      - minio_net
+    working_dir: /app
+    depends_on:
+      minio:
+        condition: service_healthy
+      spark-master:
+        condition: service_started
 
  
 volumes:
@@ -117,6 +155,8 @@ volumes:
     driver: local
   kaggle_data:
     driver: local
+  spark_ivy_cache:
+  jupyter_ivy_cache:
  
 networks:
   minio_net:

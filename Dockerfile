@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openjdk-17-jre-headless \
     curl \
     ca-certificates \
+    procps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -24,6 +25,9 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 # 6. Copy the rest of your application code
 COPY . .
+
+# 7. Final sync to install the 'resynor' project itself
+RUN uv sync --frozen
 
 # running the app 
 

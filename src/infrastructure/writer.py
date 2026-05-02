@@ -28,6 +28,10 @@ def _configure_s3a(spark: SparkSession, endpoint: str, access_key: str, secret_k
     hadoop_conf.set("fs.s3a.connection.ssl.enabled", "false")
     hadoop_conf.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
 
+    # Explicitly set timeouts as integers (milliseconds) to avoid "60s" NumberFormatException
+    hadoop_conf.set("fs.s3a.connection.timeout", "60000")
+    hadoop_conf.set("fs.s3a.connection.establish.timeout", "60000")
+
 
 def _write_df(df: DataFrame, path: str, fmt: str, partition_cols: list[str] | None) -> None:
     writer = df.write.mode("overwrite").format(fmt)
@@ -70,7 +74,6 @@ def write_to_minio(
     fmt            : "parquet", "csv", or "delta".
     partition_cols : Optional list of columns to partition by (e.g. ["Warehouse"]).
     """
-    _configure_s3a(spark, endpoint, access_key, secret_key)
     path = f"s3a://{bucket}/{prefix}"
     logger.info("Writing to MinIO: %s (format=%s)", path, fmt)
     _write_df(df, path, fmt, partition_cols)

@@ -17,32 +17,34 @@ import time
 
 import boto3
 from botocore.client import Config
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ─── Configuration (from environment) ────────────────────────────────────────
-MINIO_ENDPOINT  = os.environ["MINIO_ENDPOINT"]          # e.g. http://minio:9000
-MINIO_USER      = os.environ["MINIO_ROOT_USER"]
-MINIO_PASSWORD  = os.environ["MINIO_ROOT_PASSWORD"]
-BUCKET_NAME     = os.environ.get("BUCKET_NAME", "raw")
-DATASET_SLUG    = os.environ.get("DATASET_SLUG",
-                                  "felixzhao/productdemandforecasting")
+MINIO_ENDPOINT = os.environ["MINIO_ENDPOINT"]  # e.g. http://minio:9000
+MINIO_USER = os.environ["MINIO_ROOT_USER"]
+MINIO_PASSWORD = os.environ["MINIO_ROOT_PASSWORD"]
+BUCKET_NAME = os.environ.get("BUCKET_NAME", "raw")
+DATASET_SLUG = os.environ.get("DATASET_SLUG", "felixzhao/productdemandforecasting")
 KAGGLE_USERNAME = os.environ["KAGGLE_USERNAME"]
-KAGGLE_KEY      = os.environ["KAGGLE_KEY"]
-DOWNLOAD_DIR    = pathlib.Path(os.environ.get("DOWNLOAD_DIR", "/tmp/kaggle"))
+KAGGLE_KEY = os.environ["KAGGLE_KEY"]
+DOWNLOAD_DIR = pathlib.Path(os.environ.get("DOWNLOAD_DIR", "/tmp/kaggle"))
 
 # ─── Write Kaggle credentials ─────────────────────────────────────────────────
 kaggle_dir = pathlib.Path.home() / ".config" / "kaggle"
 kaggle_dir.mkdir(parents=True, exist_ok=True)
 kaggle_cred = kaggle_dir / "kaggle.json"
-kaggle_cred.write_text(
-    json.dumps({"username": KAGGLE_USERNAME, "key": KAGGLE_KEY})
-)
+kaggle_cred.write_text(json.dumps({"username": KAGGLE_USERNAME, "key": KAGGLE_KEY}))
 kaggle_cred.chmod(0o600)
 print(f"Kaggle credentials written to {kaggle_cred}")
 
 # ─── Download dataset ─────────────────────────────────────────────────────────
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-from kaggle.api.kaggle_api_extended import KaggleApi  # noqa: E402 (import after cred file written)
+from kaggle.api.kaggle_api_extended import (
+    KaggleApi,
+)  # noqa: E402 (import after cred file written)
 
 api = KaggleApi()
 api.authenticate()
@@ -51,7 +53,7 @@ print(f"Downloading dataset '{DATASET_SLUG}' → {DOWNLOAD_DIR} ...")
 api.dataset_download_files(
     DATASET_SLUG,
     path=str(DOWNLOAD_DIR),
-    unzip=False,   # we'll unzip ourselves so we control the path
+    unzip=False,  # we'll unzip ourselves so we control the path
     quiet=False,
 )
 print("Download complete.")
@@ -63,7 +65,7 @@ if zip_files:
         print(f"Extracting {zf.name} ...")
         with zipfile.ZipFile(zf, "r") as z:
             z.extractall(DOWNLOAD_DIR)
-        zf.unlink()   # remove the zip after extraction
+        zf.unlink()  # remove the zip after extraction
     print("Extraction complete.")
 
 # ─── Connect to MinIO (S3-compatible) ────────────────────────────────────────
@@ -110,3 +112,4 @@ for local_path in all_files:
 
 print(f"\n All files uploaded to MinIO bucket '{BUCKET_NAME}'.")
 print(f"     Access via:  {MINIO_ENDPOINT}/{BUCKET_NAME}/")
+

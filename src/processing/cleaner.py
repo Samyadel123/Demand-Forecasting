@@ -44,6 +44,7 @@ logger = logging.getLogger(__name__)
 # 1. Schema normalisation
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def normalise_column_names(df: DataFrame) -> DataFrame:
     """
     Strip whitespace from column names and normalise to Title_Case.
@@ -57,7 +58,14 @@ def normalise_column_names(df: DataFrame) -> DataFrame:
     return df
 
 
-EXPECTED_COLUMNS = {"Product_Code", "Warehouse", "Product_Category", "Date", "Order_Demand"}
+EXPECTED_COLUMNS = {
+    "Product_Code",
+    "Warehouse",
+    "Product_Category",
+    "Date",
+    "Order_Demand",
+}
+
 
 def validate_schema(df: DataFrame) -> None:
     """Raise ValueError if any expected column is missing."""
@@ -74,6 +82,7 @@ def validate_schema(df: DataFrame) -> None:
 # 2. Duplicate removal
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def drop_duplicates(df: DataFrame) -> DataFrame:
     """
     Remove exact duplicate rows across all five columns.
@@ -83,13 +92,16 @@ def drop_duplicates(df: DataFrame) -> DataFrame:
     before = df.count()
     df = df.dropDuplicates()
     after = df.count()
-    logger.info("Duplicates removed: %d rows dropped (%d → %d).", before - after, before, after)
+    logger.info(
+        "Duplicates removed: %d rows dropped (%d → %d).", before - after, before, after
+    )
     return df
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 3. Categorical column cleaning
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def clean_categoricals(df: DataFrame) -> DataFrame:
     """
@@ -106,6 +118,7 @@ def clean_categoricals(df: DataFrame) -> DataFrame:
 # 4. Date parsing  (multiple formats)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def parse_date(df: DataFrame, date_formats: list[str]) -> DataFrame:
     """
     Try each date format in order; keep the first successful parse per row.
@@ -118,9 +131,7 @@ def parse_date(df: DataFrame, date_formats: list[str]) -> DataFrame:
     date_formats : Ordered list of Java SimpleDateFormat patterns to attempt.
     """
     # Build a coalesce() chain — the first non-null result wins
-    parse_attempts = [
-        F.to_date(F.col("Date"), fmt) for fmt in date_formats
-    ]
+    parse_attempts = [F.to_date(F.col("Date"), fmt) for fmt in date_formats]
     df = df.withColumn("Date_parsed", F.coalesce(*parse_attempts))
     df = df.withColumn(
         "date_parse_failed",
@@ -141,6 +152,7 @@ def parse_date(df: DataFrame, date_formats: list[str]) -> DataFrame:
 # ═══════════════════════════════════════════════════════════════════════════════
 # 5. Order_Demand  — the most complex column
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def parse_order_demand(df: DataFrame) -> DataFrame:
     """
@@ -189,19 +201,22 @@ def flag_demand_anomalies(df: DataFrame) -> DataFrame:
     Rows are NOT dropped here — modelling teams may want to include or
     exclude them based on the forecasting strategy.
     """
-    df = df.withColumn("is_negative_demand", F.col("Order_Demand") < 0)
     df = df.withColumn("is_zero_demand", F.col("Order_Demand") == 0)
 
-    neg = df.filter(F.col("is_negative_demand")).count()
-    zero = df.filter(F.col("is_zero_demand")).count()
-    logger.info("Negative demand rows flagged: %d", neg)
-    logger.info("Zero demand rows flagged: %d", zero)
-    return df
+    initial_count = df.count()
+    df_cleaned = df.filter(F.col("Order_Demand") >= 0)
+    final_count = df_cleaned.count()
+    dropped = initial_count - final_count
+
+    logger.info("CLEANING: Dropped %d negative/sentinel rows.", dropped)
+    logger.info("VALID DATASET: %d rows (includes zeros).", final_count)
+    return df_cleaned
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 6. Null handling
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def handle_nulls(df: DataFrame, null_demand_strategy: str = "drop") -> DataFrame:
     """
@@ -233,13 +248,15 @@ def handle_nulls(df: DataFrame, null_demand_strategy: str = "drop") -> DataFrame
     )
     df = df.filter(F.col("Date").isNotNull())  # also covers date_parse_failed rows
 
-    logger.info(
-        "Rows dropped (null key/date): %d", before - df.count()
-    )
+    logger.info("Rows dropped (null key/date): %d", before - df.count())
 
     # ── Order_Demand nulls ──────────────────────────────────────────────────
     null_demand_count = df.filter(F.col("Order_Demand").isNull()).count()
-    logger.info("NULL Order_Demand rows: %d (strategy: %s)", null_demand_count, null_demand_strategy)
+    logger.info(
+        "NULL Order_Demand rows: %d (strategy: %s)",
+        null_demand_count,
+        null_demand_strategy,
+    )
 
     if null_demand_strategy == "drop":
         df = df.filter(F.col("Order_Demand").isNotNull())
@@ -257,8 +274,9 @@ def handle_nulls(df: DataFrame, null_demand_strategy: str = "drop") -> DataFrame
         df = df.join(median_df, on="Product_Code", how="left")
         df = df.withColumn(
             "Order_Demand",
-            F.when(F.col("Order_Demand").isNull(), F.col("median_demand"))
-            .otherwise(F.col("Order_Demand")),
+            F.when(F.col("Order_Demand").isNull(), F.col("median_demand")).otherwise(
+                F.col("Order_Demand")
+            ),
         )
         df = df.drop("median_demand")
 
@@ -271,6 +289,7 @@ def handle_nulls(df: DataFrame, null_demand_strategy: str = "drop") -> DataFrame
 # ═══════════════════════════════════════════════════════════════════════════════
 # 7. Outlier detection
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def flag_outliers_iqr(df: DataFrame, multiplier: float = 3.0) -> DataFrame:
     """
@@ -288,7 +307,7 @@ def flag_outliers_iqr(df: DataFrame, multiplier: float = 3.0) -> DataFrame:
     """
     # Compute per-warehouse quartiles
     quantiles = (
-        df.filter(F.col("Order_Demand") > 0)   # exclude negatives / zeros from IQR
+        df.filter(F.col("Order_Demand") > 0)  # exclude negatives / zeros from IQR
         .groupBy("Warehouse")
         .agg(
             F.expr("percentile_approx(Order_Demand, 0.25)").alias("Q1"),
@@ -349,6 +368,7 @@ def flag_outliers_zscore(df: DataFrame, threshold: float = 4.0) -> DataFrame:
 # 8. Sparse-product detection
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def flag_sparse_products(df: DataFrame, min_records: int = 10) -> DataFrame:
     """
     Products with fewer than `min_records` non-null demand rows cannot be
@@ -364,14 +384,19 @@ def flag_sparse_products(df: DataFrame, min_records: int = 10) -> DataFrame:
     df = df.withColumn("is_sparse_product", F.col("record_count") < min_records)
     df = df.drop("record_count")
 
-    sparse = df.filter(F.col("is_sparse_product")).select("Product_Code").distinct().count()
-    logger.info("Sparse products flagged (< %d records): %d products.", min_records, sparse)
+    sparse = (
+        df.filter(F.col("is_sparse_product")).select("Product_Code").distinct().count()
+    )
+    logger.info(
+        "Sparse products flagged (< %d records): %d products.", min_records, sparse
+    )
     return df
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 9. Temporal enrichment  (derived columns useful for time-series models)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def add_temporal_columns(df: DataFrame) -> DataFrame:
     """
@@ -382,12 +407,11 @@ def add_temporal_columns(df: DataFrame) -> DataFrame:
     in src/processing/features.py.
     """
     df = (
-        df
-        .withColumn("year",        F.year("Date"))
-        .withColumn("month",       F.month("Date"))
-        .withColumn("day_of_week", F.dayofweek("Date"))   # 1=Sunday … 7=Saturday
+        df.withColumn("year", F.year("Date"))
+        .withColumn("month", F.month("Date"))
+        .withColumn("day_of_week", F.dayofweek("Date"))  # 1=Sunday … 7=Saturday
         .withColumn("week_of_year", F.weekofyear("Date"))
-        .withColumn("year_month",  F.date_format("Date", "yyyy-MM"))
+        .withColumn("year_month", F.date_format("Date", "yyyy-MM"))
     )
     logger.info("Temporal enrichment columns added.")
     return df
@@ -397,31 +421,45 @@ def add_temporal_columns(df: DataFrame) -> DataFrame:
 # 10. Quality summary  (logged, not written to disk)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def log_quality_summary(df: DataFrame) -> None:
     """Print a concise quality report to the logger after all cleaning steps."""
     total = df.count()
     logger.info("═" * 60)
     logger.info("CLEANING SUMMARY")
     logger.info("  Total rows          : %d", total)
-    logger.info("  Distinct products   : %d", df.select("Product_Code").distinct().count())
+    logger.info(
+        "  Distinct products   : %d", df.select("Product_Code").distinct().count()
+    )
     logger.info("  Distinct warehouses : %d", df.select("Warehouse").distinct().count())
-    logger.info("  Date range          : %s → %s",
-                df.agg(F.min("Date")).collect()[0][0],
-                df.agg(F.max("Date")).collect()[0][0])
-    logger.info("  NULL Order_Demand   : %d", df.filter(F.col("Order_Demand").isNull()).count())
-    logger.info("  Negative demand     : %d", df.filter(F.col("is_negative_demand")).count())
-    logger.info("  Zero demand         : %d", df.filter(F.col("is_zero_demand")).count())
+    logger.info(
+        "  Date range          : %s → %s",
+        df.agg(F.min("Date")).collect()[0][0],
+        df.agg(F.max("Date")).collect()[0][0],
+    )
+    logger.info(
+        "  NULL Order_Demand   : %d", df.filter(F.col("Order_Demand").isNull()).count()
+    )
+    logger.info(
+        "  Negative demand     : %d", df.filter(F.col("is_negative_demand")).count()
+    )
+    logger.info(
+        "  Zero demand         : %d", df.filter(F.col("is_zero_demand")).count()
+    )
     logger.info("  Outlier rows        : %d", df.filter(F.col("is_outlier")).count())
-    logger.info("  Sparse products     : %d rows",
-                df.filter(F.col("is_sparse_product")).count())
-    logger.info("  Date parse failures : %d",
-                df.filter(F.col("date_parse_failed")).count())
+    logger.info(
+        "  Sparse products     : %d rows", df.filter(F.col("is_sparse_product")).count()
+    )
+    logger.info(
+        "  Date parse failures : %d", df.filter(F.col("date_parse_failed")).count()
+    )
     logger.info("═" * 60)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 11. Master cleaning function
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def clean(df: DataFrame, cfg: dict) -> DataFrame:
     """
@@ -464,7 +502,9 @@ def clean(df: DataFrame, cfg: dict) -> DataFrame:
     df = clean_categoricals(df)
 
     # ── Step 5 ───────────────────────────────────────────────────────────────
-    date_formats = cleaning_cfg.get("date_formats", ["yyyy/MM/dd", "MM/dd/yyyy", "yyyy-MM-dd"])
+    date_formats = cleaning_cfg.get(
+        "date_formats", ["yyyy/MM/dd", "MM/dd/yyyy", "yyyy-MM-dd"]
+    )
     df = parse_date(df, date_formats)
 
     # ── Step 6 ───────────────────────────────────────────────────────────────
@@ -483,7 +523,9 @@ def clean(df: DataFrame, cfg: dict) -> DataFrame:
     if strategy == "iqr":
         df = flag_outliers_iqr(df, multiplier=outlier_cfg.get("iqr_multiplier", 3.0))
     elif strategy == "zscore":
-        df = flag_outliers_zscore(df, threshold=outlier_cfg.get("zscore_threshold", 4.0))
+        df = flag_outliers_zscore(
+            df, threshold=outlier_cfg.get("zscore_threshold", 4.0)
+        )
 
     # ── Step 10 ──────────────────────────────────────────────────────────────
     min_records = cleaning_cfg.get("min_records_per_product", 10)

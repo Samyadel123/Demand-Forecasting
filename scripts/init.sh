@@ -10,16 +10,19 @@ done
  
 echo "Connected to MinIO."
  
-# Create the 'raw' bucket if it doesn't already exist
-if mc ls local/raw > /dev/null 2>&1; then
-  echo "Bucket 'raw' already exists – skipping creation."
-else
-  mc mb local/raw
-  echo "Bucket 'raw' created."
-fi
- 
+# Create buckets if they don't already exist
+for bucket in raw processed; do
+  if mc ls "local/${bucket}" > /dev/null 2>&1; then
+    echo "Bucket '${bucket}' already exists – skipping creation."
+  else
+    mc mb "local/${bucket}"
+    echo "Bucket '${bucket}' created."
+  fi
+done
+
 # Set anonymous read policy so the data is always accessible
 mc anonymous set download local/raw
-echo "Bucket 'raw' is publicly readable."
+mc anonymous set download local/processed
+echo "Buckets are publicly readable."
  
 echo "MinIO initialisation complete."
