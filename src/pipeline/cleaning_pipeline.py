@@ -135,7 +135,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--source",
-        choices=["minio", "local"],
+        choices=["minio", "local", "hdfs"],
         default=None,
         help="Override the data source in the config file.",
     )
@@ -201,4 +201,3 @@ if __name__ == "__main__":
         source_override=args.source,
         fmt_override=args.output_format,
     )
-

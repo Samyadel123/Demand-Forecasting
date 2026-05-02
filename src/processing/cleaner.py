@@ -114,6 +114,22 @@ def clean_categoricals(df: DataFrame) -> DataFrame:
     return df
 
 
+def repartition_for_warehouse(df: DataFrame, cfg: dict) -> DataFrame:
+    """Repartition by configured columns for better parallel aggregation and writes."""
+    optimization_cfg = cfg.get("optimization", {})
+    repartition_num = optimization_cfg.get("repartition_num")
+    repartition_cols = optimization_cfg.get("repartition_cols", ["Warehouse"])
+
+    if repartition_num and repartition_cols:
+        df = df.repartition(repartition_num, *repartition_cols)
+        logger.info(
+            "Repartitioned data into %s partitions by %s.",
+            repartition_num,
+            repartition_cols,
+        )
+    return df
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # 4. Date parsing  (multiple formats)
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -500,6 +516,7 @@ def clean(df: DataFrame, cfg: dict) -> DataFrame:
 
     # ── Step 4 ───────────────────────────────────────────────────────────────
     df = clean_categoricals(df)
+    df = repartition_for_warehouse(df, cfg)
 
     # ── Step 5 ───────────────────────────────────────────────────────────────
     date_formats = cleaning_cfg.get(

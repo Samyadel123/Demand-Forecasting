@@ -4,8 +4,9 @@ src/infrastructure/reader.py
 Spark-based readers that abstract over data sources:
   - MinIO (S3-compatible) via s3a://
   - Local filesystem
+  - HDFS via hdfs://
 
-Both return a raw Spark DataFrame with no transformations applied.
+All return a raw Spark DataFrame with no transformations applied.
 """
 
 from __future__ import annotations
@@ -93,7 +94,7 @@ def read_from_local(
     infer_schema: bool = False,
 ) -> DataFrame:
     """
-    Read a CSV from the local (or HDFS) filesystem.
+    Read a CSV from the local filesystem.
 
     Parameters
     ----------
@@ -119,6 +120,17 @@ def read_from_local(
 
     logger.info("Loaded %d columns from local source.", len(df.columns))
     return df
+
+
+def read_from_hdfs(
+    spark: SparkSession,
+    path: str,
+    header: bool = True,
+    infer_schema: bool = False,
+) -> DataFrame:
+    """Read a CSV from HDFS using Spark's built-in HDFS support."""
+    logger.info("Reading from HDFS path: %s", path)
+    return read_from_local(spark, path, header=header, infer_schema=infer_schema)
 
 
 def read(spark: SparkSession, cfg: dict) -> DataFrame:
@@ -148,5 +160,7 @@ def read(spark: SparkSession, cfg: dict) -> DataFrame:
         )
     elif source == "local":
         return read_from_local(spark, cfg["data"]["local"]["raw_path"])
+    elif source == "hdfs":
+        return read_from_hdfs(spark, cfg["data"]["hdfs"]["raw_path"])
     else:
-        raise ValueError(f"Unknown data source '{source}'. Use 'minio' or 'local'.")
+        raise ValueError(f"Unknown data source '{source}'. Use 'minio', 'local', or 'hdfs'.")

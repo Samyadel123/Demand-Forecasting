@@ -4,6 +4,7 @@ src/infrastructure/writer.py
 Spark-based writers that abstract over output destinations:
   - MinIO (s3a://) — processed bucket
   - Local filesystem
+  - HDFS (hdfs://)
 
 Supports Parquet (recommended), CSV, and Delta (if delta-spark is installed).
 """
@@ -99,6 +100,17 @@ def write_to_local(
     _write_df(df, path, fmt, partition_cols)
 
 
+def write_to_hdfs(
+    df: DataFrame,
+    path: str,
+    fmt: str = "parquet",
+    partition_cols: list[str] | None = None,
+) -> None:
+    """Write a cleaned Spark DataFrame to HDFS."""
+    logger.info("Writing to HDFS path: %s (format=%s)", path, fmt)
+    _write_df(df, path, fmt, partition_cols)
+
+
 def write(spark: SparkSession, df: DataFrame, cfg: dict) -> None:
     """
     Dispatch writer based on `cfg['data']['source']`.
@@ -138,5 +150,12 @@ def write(spark: SparkSession, df: DataFrame, cfg: dict) -> None:
             fmt=fmt,
             partition_cols=partition_cols,
         )
+    elif source == "hdfs":
+        write_to_hdfs(
+            df,
+            path=cfg["data"]["hdfs"]["processed_path"],
+            fmt=fmt,
+            partition_cols=partition_cols,
+        )
     else:
-        raise ValueError(f"Unknown data source '{source}'.")
+        raise ValueError(f"Unknown data source '{source}'. Use 'minio', 'local', or 'hdfs'.")
