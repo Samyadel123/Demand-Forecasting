@@ -10,7 +10,10 @@ spark:
   log_level: "WARN"
   config:
     spark.sql.shuffle.partitions: "8"
+    spark.default.parallelism: "8"
     spark.driver.memory: "2g"
+    # Set HDFS replication when running on HDFS-backed storage.
+    spark.hadoop.dfs.replication: "3"
 
 data:
   # MinIO / S3 source  (used when source = "minio")
@@ -26,8 +29,13 @@ data:
     raw_path: "data/raw/Historical Product Demand.csv"
     processed_path: "data/processed/demand_cleaned"
 
-  # Choose "minio" or "local"
-  source: "minio"
+  # HDFS fallback (used when source = "hdfs")
+  hdfs:
+    raw_path: "hdfs://namenode:8020/data/raw/Historical Product Demand.csv"
+    processed_path: "hdfs://namenode:8020/data/processed/demand_cleaned"
+
+  # Choose "minio", "local", or "hdfs"
+  source: "local"
   output_format: "parquet"     # parquet | csv | delta
 
 schema:
@@ -61,6 +69,12 @@ cleaning:
 
   # Fill strategy for missing demand after all repairs: "zero" | "drop" | "median"
   null_demand_strategy: "drop"
+
+optimization:
+  # Repartition before warehouse-based aggregation and writing.
+  repartition_num: 100
+  repartition_cols:
+    - "Warehouse"
 
 logging:
   path: "logs/cleaning_pipeline.log"
