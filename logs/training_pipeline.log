@@ -1,0 +1,333 @@
+2026-05-02 16:50:36 [INFO] __main__ — SparkSession created: DemandForecastingTrainer (master=local[*])
+2026-05-02 16:50:36 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:50:36 [INFO] __main__ — STEP 1/4 — Loading Cleaned Data
+2026-05-02 16:50:36 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:50:36 [INFO] src.infrastructure.reader — Loading cleaned data from local path: data/processed/demand_cleaned
+2026-05-02 16:50:37 [INFO] __main__ — Pipeline completed in 1.1 seconds.
+2026-05-02 16:50:38 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 16:52:38 [INFO] __main__ — SparkSession created: DemandForecastingTrainer (master=local[*])
+2026-05-02 16:52:38 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:52:38 [INFO] __main__ — STEP 1/4 — Loading Cleaned Data
+2026-05-02 16:52:38 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:52:38 [INFO] src.infrastructure.reader — Loading cleaned data from MinIO: s3a://processed/processed/Historical_Product_Demand_Clean.parquet
+2026-05-02 16:59:49 [INFO] py4j.clientserver — Error while receiving.
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.13/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+                          ~~~~~~~~~~~~~~~~~~~~^^
+RuntimeError: reentrant call inside <_io.BufferedReader name=6>
+2026-05-02 16:59:49 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 16:59:49 [ERROR] root — Exception while sending command.
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.13/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+                          ~~~~~~~~~~~~~~~~~~~~^^
+RuntimeError: reentrant call inside <_io.BufferedReader name=6>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.13/site-packages/py4j/java_gateway.py", line 1038, in send_command
+    response = connection.send_command(command)
+  File "/app/.venv/lib/python3.13/site-packages/py4j/clientserver.py", line 539, in send_command
+    raise Py4JNetworkError(
+        "Error while sending or receiving", e, proto.ERROR_ON_RECEIVE)
+py4j.protocol.Py4JNetworkError: Error while sending or receiving
+2026-05-02 16:59:49 [INFO] py4j.clientserver — Error while receiving.
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.13/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+                          ~~~~~~~~~~~~~~~~~~~~^^
+  File "/root/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/lib/python3.13/socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "/app/.venv/lib/python3.13/site-packages/pyspark/context.py", line 381, in signal_handler
+    self.cancelAllJobs()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/app/.venv/lib/python3.13/site-packages/pyspark/context.py", line 2446, in cancelAllJobs
+    self._jsc.sc().cancelAllJobs()
+    ~~~~~~~~~~~~^^
+  File "/app/.venv/lib/python3.13/site-packages/py4j/java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+        answer, self.gateway_client, self.target_id, self.name)
+  File "/app/.venv/lib/python3.13/site-packages/pyspark/errors/exceptions/captured.py", line 179, in deco
+    return f(*a, **kw)
+  File "/app/.venv/lib/python3.13/site-packages/py4j/protocol.py", line 334, in get_return_value
+    raise Py4JError(
+        "An error occurred while calling {0}{1}{2}".
+        format(target_id, ".", name))
+py4j.protocol.Py4JError: An error occurred while calling o41.sc
+2026-05-02 16:59:49 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 16:59:49 [ERROR] root — Exception while sending command.
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.13/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+                          ~~~~~~~~~~~~~~~~~~~~^^
+  File "/root/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/lib/python3.13/socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "/app/.venv/lib/python3.13/site-packages/pyspark/context.py", line 381, in signal_handler
+    self.cancelAllJobs()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/app/.venv/lib/python3.13/site-packages/pyspark/context.py", line 2446, in cancelAllJobs
+    self._jsc.sc().cancelAllJobs()
+    ~~~~~~~~~~~~^^
+  File "/app/.venv/lib/python3.13/site-packages/py4j/java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+        answer, self.gateway_client, self.target_id, self.name)
+  File "/app/.venv/lib/python3.13/site-packages/pyspark/errors/exceptions/captured.py", line 179, in deco
+    return f(*a, **kw)
+  File "/app/.venv/lib/python3.13/site-packages/py4j/protocol.py", line 334, in get_return_value
+    raise Py4JError(
+        "An error occurred while calling {0}{1}{2}".
+        format(target_id, ".", name))
+py4j.protocol.Py4JError: An error occurred while calling o41.sc
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.13/site-packages/py4j/java_gateway.py", line 1038, in send_command
+    response = connection.send_command(command)
+  File "/app/.venv/lib/python3.13/site-packages/py4j/clientserver.py", line 539, in send_command
+    raise Py4JNetworkError(
+        "Error while sending or receiving", e, proto.ERROR_ON_RECEIVE)
+py4j.protocol.Py4JNetworkError: Error while sending or receiving
+2026-05-02 16:59:49 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 16:59:49 [INFO] __main__ — Pipeline completed in 430.7 seconds.
+2026-05-02 16:59:49 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 17:36:50 [INFO] __main__ — SparkSession created: DemandForecastingTrainer (master=local[*])
+2026-05-02 17:36:50 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:36:50 [INFO] __main__ — STEP 1/4 — Loading Cleaned Data
+2026-05-02 17:36:50 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:36:50 [INFO] src.infrastructure.reader — Loading partitioned data from MinIO: s3a://processed/demand_cleaned
+2026-05-02 17:36:54 [INFO] src.infrastructure.reader — Loaded 9 columns from cleaned data source.
+2026-05-02 17:36:54 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:36:54 [INFO] __main__ — STEP 2/4 — Feature Engineering
+2026-05-02 17:36:54 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:36:54 [INFO] src.features.engineer — Starting feature engineering...
+2026-05-02 17:36:54 [INFO] src.features.engineer — Lag features (T-2) added.
+2026-05-02 17:36:54 [INFO] src.features.engineer — Rolling window features (7d) added.
+2026-05-02 17:36:54 [INFO] src.features.engineer — Binary indicator features (Q4, Monday) added.
+2026-05-02 17:36:54 [INFO] src.features.engineer — Feature nulls filled with 0 for: ['demand_T_minus_2', 'rolling_7d_stddev', 'rolling_7d_mean']
+2026-05-02 17:36:54 [INFO] src.features.engineer — Feature engineering complete. Total columns: 14
+2026-05-02 17:36:54 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:36:54 [INFO] __main__ — STEP 3/4 — Data Preparation (Filtering & Split)
+2026-05-02 17:36:54 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:36:54 [INFO] __main__ — Filtering for Warehouse: WHSE_S, Category: CATEGORY_019
+2026-05-02 17:36:59 [INFO] __main__ — Dropped 0 rows with NaNs (start-of-series).
+2026-05-02 17:36:59 [INFO] __main__ — Split: Train (Before 2016) = 18769 rows, Test (2016) = 2223 rows
+2026-05-02 17:36:59 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:36:59 [INFO] __main__ — STEP 4/4 — Model Tournament
+2026-05-02 17:36:59 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:36:59 [INFO] __main__ — --> Evaluating Baseline Linear...
+2026-05-02 17:36:59 [INFO] __main__ —     Baseline Linear completed in 0.01s. MAE: 1,283,453.34
+2026-05-02 17:36:59 [INFO] __main__ — --> Evaluating Prophet (Time Series)...
+2026-05-02 17:37:00 [INFO] cmdstanpy — Chain [1] start processing
+2026-05-02 17:37:01 [INFO] cmdstanpy — Chain [1] done processing
+2026-05-02 17:37:02 [INFO] __main__ —     Prophet (Time Series) completed in 3.02s. MAE: 85,365.29
+2026-05-02 17:37:02 [INFO] __main__ — --> Evaluating Random Forest...
+2026-05-02 17:37:03 [INFO] __main__ —     Random Forest completed in 1.13s. MAE: 42,996.63
+2026-05-02 17:37:03 [INFO] __main__ — --> Evaluating XGBoost...
+2026-05-02 17:37:05 [INFO] __main__ —     XGBoost completed in 1.98s. MAE: 36,231.52
+2026-05-02 17:37:05 [INFO] __main__ — --> Evaluating LightGBM...
+2026-05-02 17:37:06 [INFO] __main__ —     LightGBM completed in 0.79s. MAE: 37,347.56
+2026-05-02 17:37:06 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:37:06 [INFO] __main__ — WHALE LEADERBOARD
+2026-05-02 17:37:06 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:37:06 [INFO] __main__ — 1. XGBoost                  :    36,231.52 MAE
+2026-05-02 17:37:06 [INFO] __main__ — 2. LightGBM                 :    37,347.56 MAE
+2026-05-02 17:37:06 [INFO] __main__ — 3. Random Forest            :    42,996.63 MAE
+2026-05-02 17:37:06 [INFO] __main__ — 4. Prophet (Time Series)    :    85,365.29 MAE
+2026-05-02 17:37:06 [INFO] __main__ — 5. Baseline Linear          : 1,283,453.34 MAE
+2026-05-02 17:37:06 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:37:06 [INFO] __main__ — WINNER: XGBoost
+2026-05-02 17:37:06 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:37:06 [INFO] __main__ — Leaderboard saved to: reports/leaderboard.json
+2026-05-02 17:37:06 [INFO] __main__ — Model saved: Baseline Linear -> models/artifacts/baseline_linear.pkl
+2026-05-02 17:37:06 [INFO] __main__ — Model saved: Prophet (Time Series) -> models/artifacts/prophet_time_series.pkl
+2026-05-02 17:37:06 [INFO] __main__ — Model saved: Random Forest -> models/artifacts/random_forest.pkl
+2026-05-02 17:37:06 [INFO] __main__ — Model saved: XGBoost -> models/artifacts/xgboost_best.pkl
+2026-05-02 17:37:06 [INFO] __main__ — Model saved: LightGBM -> models/artifacts/lightgbm.pkl
+2026-05-02 17:37:06 [INFO] __main__ — Pipeline completed in 15.3 seconds.
+2026-05-02 17:37:06 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 17:43:31 [INFO] __main__ — SparkSession created: DemandForecastingTrainer (master=local[*])
+2026-05-02 17:43:31 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:31 [INFO] __main__ — STEP 1/4 — Loading Cleaned Data
+2026-05-02 17:43:31 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:31 [INFO] src.infrastructure.reader — Loading partitioned data from MinIO: s3a://processed/demand_cleaned
+2026-05-02 17:43:34 [INFO] src.infrastructure.reader — Loaded 9 columns from cleaned data source.
+2026-05-02 17:43:34 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:34 [INFO] __main__ — STEP 2/4 — Feature Engineering
+2026-05-02 17:43:34 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:34 [INFO] src.features.engineer — Starting feature engineering...
+2026-05-02 17:43:35 [INFO] src.features.engineer — Lag features (T-2) added.
+2026-05-02 17:43:35 [INFO] src.features.engineer — Rolling window features (7d) added.
+2026-05-02 17:43:35 [INFO] src.features.engineer — Binary indicator features (Q4, Monday) added.
+2026-05-02 17:43:35 [INFO] src.features.engineer — Feature nulls filled with 0 for: ['demand_T_minus_2', 'rolling_7d_stddev', 'rolling_7d_mean']
+2026-05-02 17:43:35 [INFO] src.features.engineer — Feature engineering complete. Total columns: 14
+2026-05-02 17:43:35 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:35 [INFO] __main__ — STEP 3/4 — Data Preparation (Filtering & Split)
+2026-05-02 17:43:35 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:35 [INFO] __main__ — Filtering for Warehouse: WHSE_S, Category: CATEGORY_019
+2026-05-02 17:43:40 [INFO] __main__ — Dropped 0 rows with NaNs (start-of-series).
+2026-05-02 17:43:40 [INFO] __main__ — Split: Train (Before 2016) = 18769 rows, Test (2016) = 2223 rows
+2026-05-02 17:43:40 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:40 [INFO] __main__ — STEP 4/4 — Model Tournament
+2026-05-02 17:43:40 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:40 [INFO] __main__ — --> Evaluating Baseline Linear...
+2026-05-02 17:43:40 [INFO] __main__ —     Baseline Linear completed in 0.01s. MAE: 1,283,453.34 | F1: 0.46
+2026-05-02 17:43:40 [INFO] __main__ — --> Evaluating Prophet (Time Series)...
+2026-05-02 17:43:41 [INFO] cmdstanpy — Chain [1] start processing
+2026-05-02 17:43:43 [INFO] cmdstanpy — Chain [1] done processing
+2026-05-02 17:43:43 [INFO] __main__ —     Prophet (Time Series) completed in 3.20s. MAE: 85,365.29 | F1: 0.55
+2026-05-02 17:43:43 [INFO] __main__ — --> Evaluating Random Forest...
+2026-05-02 17:43:44 [INFO] __main__ —     Random Forest completed in 1.11s. MAE: 42,996.63 | F1: 0.75
+2026-05-02 17:43:44 [INFO] __main__ — --> Evaluating XGBoost...
+2026-05-02 17:43:46 [INFO] __main__ —     XGBoost completed in 2.06s. MAE: 36,231.52 | F1: 0.76
+2026-05-02 17:43:46 [INFO] __main__ — --> Evaluating LightGBM...
+2026-05-02 17:43:47 [INFO] __main__ —     LightGBM completed in 0.85s. MAE: 37,347.56 | F1: 0.76
+2026-05-02 17:43:47 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:47 [INFO] __main__ — WHALE LEADERBOARD
+2026-05-02 17:43:47 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:47 [INFO] __main__ — 1. XGBoost                  :    36,231.52 MAE | F1: 0.76
+2026-05-02 17:43:47 [INFO] __main__ — 2. LightGBM                 :    37,347.56 MAE | F1: 0.76
+2026-05-02 17:43:47 [INFO] __main__ — 3. Random Forest            :    42,996.63 MAE | F1: 0.75
+2026-05-02 17:43:47 [INFO] __main__ — 4. Prophet (Time Series)    :    85,365.29 MAE | F1: 0.55
+2026-05-02 17:43:47 [INFO] __main__ — 5. Baseline Linear          : 1,283,453.34 MAE | F1: 0.46
+2026-05-02 17:43:47 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:47 [INFO] __main__ — WINNER (by MAE): XGBoost
+2026-05-02 17:43:47 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 17:43:47 [INFO] __main__ — Leaderboard saved to: reports/leaderboard.json
+2026-05-02 17:43:47 [INFO] __main__ — Model saved: Baseline Linear -> src/models/artifacts/baseline_linear.pkl
+2026-05-02 17:43:47 [INFO] __main__ — Model saved: Prophet (Time Series) -> src/models/artifacts/prophet_time_series.pkl
+2026-05-02 17:43:47 [INFO] __main__ — Model saved: Random Forest -> src/models/artifacts/random_forest.pkl
+2026-05-02 17:43:47 [INFO] __main__ — Model saved: XGBoost -> src/models/artifacts/xgboost_best.pkl
+2026-05-02 17:43:47 [INFO] __main__ — Model saved: LightGBM -> src/models/artifacts/lightgbm.pkl
+2026-05-02 17:43:47 [INFO] __main__ — Pipeline completed in 16.0 seconds.
+2026-05-02 17:43:47 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 19:24:53 [WARNING] urllib3.connectionpool — Retrying (Retry(total=6, connect=6, read=7, redirect=7, status=7)) after connection broken by 'NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -3] Temporary failure in name resolution)")': /api/2.0/mlflow/experiments/get-by-name?experiment_name=Demand_Forecasting_Tournament
+2026-05-02 19:25:08 [WARNING] urllib3.connectionpool — Retrying (Retry(total=5, connect=5, read=7, redirect=7, status=7)) after connection broken by 'NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -3] Temporary failure in name resolution)")': /api/2.0/mlflow/experiments/get-by-name?experiment_name=Demand_Forecasting_Tournament
+2026-05-02 19:25:27 [WARNING] urllib3.connectionpool — Retrying (Retry(total=4, connect=4, read=7, redirect=7, status=7)) after connection broken by 'NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -3] Temporary failure in name resolution)")': /api/2.0/mlflow/experiments/get-by-name?experiment_name=Demand_Forecasting_Tournament
+2026-05-02 19:25:53 [WARNING] urllib3.connectionpool — Retrying (Retry(total=3, connect=3, read=7, redirect=7, status=7)) after connection broken by 'NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -3] Temporary failure in name resolution)")': /api/2.0/mlflow/experiments/get-by-name?experiment_name=Demand_Forecasting_Tournament
+2026-05-02 19:26:36 [WARNING] urllib3.connectionpool — Retrying (Retry(total=2, connect=2, read=7, redirect=7, status=7)) after connection broken by 'NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -3] Temporary failure in name resolution)")': /api/2.0/mlflow/experiments/get-by-name?experiment_name=Demand_Forecasting_Tournament
+2026-05-02 19:27:50 [WARNING] urllib3.connectionpool — Retrying (Retry(total=1, connect=1, read=7, redirect=7, status=7)) after connection broken by 'NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -3] Temporary failure in name resolution)")': /api/2.0/mlflow/experiments/get-by-name?experiment_name=Demand_Forecasting_Tournament
+2026-05-02 20:41:11 [INFO] __main__ — MLflow initialized. Tracking URI: http://mlflow_tracking:5000
+2026-05-02 20:41:17 [INFO] __main__ — SparkSession created: DemandForecastingTrainer (master=local[*])
+2026-05-02 20:41:17 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:17 [INFO] __main__ — STEP 1/4 — Loading Cleaned Data
+2026-05-02 20:41:17 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:17 [INFO] src.infrastructure.reader — Loading partitioned data from MinIO: s3a://processed/demand_cleaned
+2026-05-02 20:41:20 [INFO] src.infrastructure.reader — Loaded 9 columns from cleaned data source.
+2026-05-02 20:41:20 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:20 [INFO] __main__ — STEP 2/4 — Feature Engineering
+2026-05-02 20:41:20 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:20 [INFO] src.features.engineer — Starting feature engineering...
+2026-05-02 20:41:20 [INFO] src.features.engineer — Lag features (T-2) added.
+2026-05-02 20:41:21 [INFO] src.features.engineer — Rolling window features (7d) added.
+2026-05-02 20:41:21 [INFO] src.features.engineer — Binary indicator features (Q4, Monday) added.
+2026-05-02 20:41:21 [INFO] src.features.engineer — Feature nulls filled with 0 for: ['demand_T_minus_2', 'rolling_7d_stddev', 'rolling_7d_mean']
+2026-05-02 20:41:21 [INFO] src.features.engineer — Feature engineering complete. Total columns: 14
+2026-05-02 20:41:21 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:21 [INFO] __main__ — STEP 3/4 — Data Preparation (Filtering & Split)
+2026-05-02 20:41:21 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:21 [INFO] __main__ — Filtering for Warehouse: WHSE_S, Category: CATEGORY_019
+2026-05-02 20:41:25 [INFO] __main__ — Dropped 0 rows with NaNs (start-of-series).
+2026-05-02 20:41:25 [INFO] __main__ — Split: Train (Before 2016) = 18769 rows, Test (2016) = 2223 rows
+2026-05-02 20:41:25 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:25 [INFO] __main__ — STEP 4/4 — Model Tournament
+2026-05-02 20:41:25 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:26 [INFO] __main__ — --> Evaluating Baseline Linear...
+2026-05-02 20:41:28 [INFO] botocore.credentials — Found credentials in environment variables.
+2026-05-02 20:41:28 [INFO] __main__ —     Baseline Linear completed in 0.02s. MAE: 1,283,453.34 | F1: 0.46
+2026-05-02 20:41:28 [INFO] __main__ — --> Evaluating Prophet (Time Series)...
+2026-05-02 20:41:29 [INFO] cmdstanpy — Chain [1] start processing
+2026-05-02 20:41:30 [INFO] cmdstanpy — Chain [1] done processing
+2026-05-02 20:41:32 [INFO] __main__ —     Prophet (Time Series) completed in 2.78s. MAE: 85,365.29 | F1: 0.55
+2026-05-02 20:41:32 [INFO] __main__ — --> Evaluating Random Forest...
+2026-05-02 20:41:34 [INFO] __main__ —     Random Forest completed in 1.17s. MAE: 42,996.63 | F1: 0.75
+2026-05-02 20:41:34 [INFO] __main__ — --> Evaluating XGBoost...
+2026-05-02 20:41:37 [INFO] __main__ —     XGBoost completed in 1.84s. MAE: 36,231.52 | F1: 0.76
+2026-05-02 20:41:37 [INFO] __main__ — --> Evaluating LightGBM...
+2026-05-02 20:41:39 [INFO] __main__ —     LightGBM completed in 1.16s. MAE: 37,347.56 | F1: 0.76
+2026-05-02 20:41:39 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:39 [INFO] __main__ — WHALE LEADERBOARD
+2026-05-02 20:41:39 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:39 [INFO] __main__ — 1. XGBoost                  :    36,231.52 MAE | F1: 0.76
+2026-05-02 20:41:39 [INFO] __main__ — 2. LightGBM                 :    37,347.56 MAE | F1: 0.76
+2026-05-02 20:41:39 [INFO] __main__ — 3. Random Forest            :    42,996.63 MAE | F1: 0.75
+2026-05-02 20:41:39 [INFO] __main__ — 4. Prophet (Time Series)    :    85,365.29 MAE | F1: 0.55
+2026-05-02 20:41:39 [INFO] __main__ — 5. Baseline Linear          : 1,283,453.34 MAE | F1: 0.46
+2026-05-02 20:41:39 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:39 [INFO] __main__ — WINNER (by MAE): XGBoost
+2026-05-02 20:41:39 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:41:39 [INFO] __main__ — Registering winning model: Resynor_Whale_Forecaster
+2026-05-02 20:41:40 [INFO] __main__ — Model version 1 set to Production alias
+2026-05-02 20:41:40 [INFO] __main__ — Leaderboard saved to: reports/leaderboard.json
+2026-05-02 20:41:40 [INFO] __main__ — Model saved: Baseline Linear -> src/models/artifacts/baseline_linear.pkl
+2026-05-02 20:41:40 [INFO] __main__ — Model saved: Prophet (Time Series) -> src/models/artifacts/prophet_time_series.pkl
+2026-05-02 20:41:40 [INFO] __main__ — Model saved: Random Forest -> src/models/artifacts/random_forest.pkl
+2026-05-02 20:41:40 [INFO] __main__ — Model saved: XGBoost -> src/models/artifacts/xgboost_best.pkl
+2026-05-02 20:41:40 [INFO] __main__ — Model saved: LightGBM -> src/models/artifacts/lightgbm.pkl
+2026-05-02 20:41:40 [INFO] __main__ — Pipeline completed in 23.3 seconds.
+2026-05-02 20:41:40 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 20:41:40 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 21:28:34 [INFO] __main__ — MLflow initialized. Tracking URI: http://mlflow_tracking:5000
+2026-05-02 21:28:41 [INFO] __main__ — SparkSession created: DemandForecastingTrainer (master=local[*])
+2026-05-02 21:28:41 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:41 [INFO] __main__ — STEP 1/4 — Loading Cleaned Data
+2026-05-02 21:28:41 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:41 [INFO] src.infrastructure.reader — Loading partitioned data from MinIO: s3a://processed/demand_cleaned
+2026-05-02 21:28:45 [INFO] src.infrastructure.reader — Loaded 9 columns from cleaned data source.
+2026-05-02 21:28:45 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:45 [INFO] __main__ — STEP 2/4 — Feature Engineering
+2026-05-02 21:28:45 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:45 [INFO] src.features.engineer — Starting feature engineering...
+2026-05-02 21:28:45 [INFO] src.features.engineer — Lag features (T-2) added.
+2026-05-02 21:28:45 [INFO] src.features.engineer — Rolling window features (7d) added.
+2026-05-02 21:28:45 [INFO] src.features.engineer — Binary indicator features (Q4, Monday) added.
+2026-05-02 21:28:45 [INFO] src.features.engineer — Feature nulls filled with 0 for: ['demand_T_minus_2', 'rolling_7d_stddev', 'rolling_7d_mean']
+2026-05-02 21:28:45 [INFO] src.features.engineer — Feature engineering complete. Total columns: 14
+2026-05-02 21:28:45 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:45 [INFO] __main__ — STEP 3/4 — Data Preparation (Filtering & Split)
+2026-05-02 21:28:45 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:45 [INFO] __main__ — Filtering for Warehouse: WHSE_S, Category: CATEGORY_019
+2026-05-02 21:28:50 [INFO] __main__ — Dropped 0 rows with NaNs (start-of-series).
+2026-05-02 21:28:50 [INFO] __main__ — Split: Train (Before 2016) = 18769 rows, Test (2016) = 2223 rows
+2026-05-02 21:28:50 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:50 [INFO] __main__ — STEP 4/4 — Model Tournament
+2026-05-02 21:28:50 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:51 [INFO] __main__ — --> Evaluating Baseline Linear...
+2026-05-02 21:28:52 [INFO] botocore.credentials — Found credentials in environment variables.
+2026-05-02 21:28:53 [INFO] __main__ —     Baseline Linear completed in 0.02s. MAE: 1,100,995.01 | F1: 0.46
+2026-05-02 21:28:53 [INFO] __main__ — --> Evaluating Prophet (Time Series)...
+2026-05-02 21:28:54 [INFO] cmdstanpy — Chain [1] start processing
+2026-05-02 21:28:55 [INFO] cmdstanpy — Chain [1] done processing
+2026-05-02 21:28:57 [INFO] __main__ —     Prophet (Time Series) completed in 2.80s. MAE: 86,362.40 | F1: 0.55
+2026-05-02 21:28:57 [INFO] __main__ — --> Evaluating Random Forest...
+2026-05-02 21:28:59 [INFO] __main__ —     Random Forest completed in 1.34s. MAE: 43,184.56 | F1: 0.75
+2026-05-02 21:28:59 [INFO] __main__ — --> Evaluating XGBoost...
+2026-05-02 21:29:02 [INFO] __main__ —     XGBoost completed in 2.02s. MAE: 36,781.86 | F1: 0.76
+2026-05-02 21:29:02 [INFO] __main__ — --> Evaluating LightGBM...
+2026-05-02 21:29:04 [INFO] __main__ —     LightGBM completed in 0.88s. MAE: 37,737.30 | F1: 0.76
+2026-05-02 21:29:04 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:29:04 [INFO] __main__ — WHALE LEADERBOARD
+2026-05-02 21:29:04 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:29:04 [INFO] __main__ — 1. XGBoost                  :    36,781.86 MAE | F1: 0.76
+2026-05-02 21:29:04 [INFO] __main__ — 2. LightGBM                 :    37,737.30 MAE | F1: 0.76
+2026-05-02 21:29:04 [INFO] __main__ — 3. Random Forest            :    43,184.56 MAE | F1: 0.75
+2026-05-02 21:29:04 [INFO] __main__ — 4. Prophet (Time Series)    :    86,362.40 MAE | F1: 0.55
+2026-05-02 21:29:04 [INFO] __main__ — 5. Baseline Linear          : 1,100,995.01 MAE | F1: 0.46
+2026-05-02 21:29:04 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:29:04 [INFO] __main__ — WINNER (by MAE): XGBoost
+2026-05-02 21:29:04 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:29:04 [INFO] __main__ — Registering winning model: Resynor_Whale_Forecaster
+2026-05-02 21:29:05 [INFO] __main__ — Model version 2 set to Production alias
+2026-05-02 21:29:05 [INFO] __main__ — Leaderboard saved to: reports/leaderboard.json
+2026-05-02 21:29:05 [INFO] __main__ — Model saved: Baseline Linear -> src/models/artifacts/baseline_linear.pkl
+2026-05-02 21:29:05 [INFO] __main__ — Model saved: Prophet (Time Series) -> src/models/artifacts/prophet_time_series.pkl
+2026-05-02 21:29:05 [INFO] __main__ — Model saved: Random Forest -> src/models/artifacts/random_forest.pkl
+2026-05-02 21:29:05 [INFO] __main__ — Model saved: XGBoost -> src/models/artifacts/xgboost_best.pkl
+2026-05-02 21:29:05 [INFO] __main__ — Model saved: LightGBM -> src/models/artifacts/lightgbm.pkl
+2026-05-02 21:29:05 [INFO] __main__ — Pipeline completed in 24.0 seconds.
+2026-05-02 21:29:05 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 21:29:05 [INFO] py4j.clientserver — Closing down clientserver connection

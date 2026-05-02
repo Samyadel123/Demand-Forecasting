@@ -1,11 +1,12 @@
 FROM python:3.12-slim-bookworm
 
-#1. Install java and uv 
+#1. Install java, uv, and system dependencies for LightGBM/XGBoost
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openjdk-17-jre-headless \
     curl \
     ca-certificates \
     procps \
+    libgomp1 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

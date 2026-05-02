@@ -1,0 +1,56 @@
+# ──────────────────────────────────────────────────────────────
+# training_config.yaml
+# Configuration for the demand-forecasting training pipeline.
+# ──────────────────────────────────────────────────────────────
+
+spark:
+  app_name: "DemandForecastingTrainer"
+  master: "local[*]"
+  log_level: "WARN"
+  config:
+    spark.sql.shuffle.partitions: "8"
+    spark.driver.memory: "4g"
+
+data:
+  source: "minio"  # minio | local
+  minio:
+    endpoint: "http://minio:9000"
+    access_key: "minioadmin"
+    secret_key: "minioadmin"
+    bucket: "processed"
+    object_key: ""
+  local:
+    processed_path: "data/processed/demand_cleaned"
+
+training:
+  # Split date for train/test (chronological)
+  test_year: 2016
+
+  # Target warehouse and category for "Whale" models
+  target_warehouse: "WHSE_S"
+  target_category: "CATEGORY_019"
+  
+  # Threshold for high-demand classification (e.g. 10000 units)
+  # This allows us to calculate F1, Precision, Recall on regression results
+  high_demand_threshold: 10000
+
+  # Models to evaluate
+  models:
+    - "Baseline Linear"
+    - "Prophet (Time Series)"
+    - "Random Forest"
+    - "XGBoost"
+    - "LightGBM"
+
+output:
+  model_dir: "src/models/artifacts"
+  report_dir: "reports"
+  metrics_filename: "leaderboard.json"
+
+mlflow:
+  tracking_uri: "http://mlflow_tracking:5000"
+  experiment_name: "Demand_Forecasting_Tournament"
+  model_registry_name: "Resynor_Whale_Forecaster"
+
+logging:
+  path: "logs/training_pipeline.log"

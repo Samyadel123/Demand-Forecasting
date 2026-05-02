@@ -78,3 +78,325 @@
 2026-05-02 07:28:52 [INFO] src.infrastructure.writer — Wrote PARQUET data to s3a://processed/demand_cleaned (partitioned by ['Warehouse']).
 2026-05-02 07:28:52 [INFO] __main__ — Pipeline completed in 50.8 seconds.
 2026-05-02 07:28:52 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 16:21:42 [INFO] __main__ — SparkSession created: DemandForecastingCleaner (master=local[*])
+2026-05-02 16:21:42 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:21:42 [INFO] __main__ — STEP 1/3 — Reading raw data
+2026-05-02 16:21:42 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:21:42 [INFO] src.infrastructure.reader — Reading from MinIO: s3a://raw/Historical Product Demand.csv
+2026-05-02 16:21:46 [INFO] src.infrastructure.reader — Loaded 5 columns from MinIO source.
+2026-05-02 16:21:46 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:21:46 [INFO] __main__ — STEP 2/3 — Cleaning
+2026-05-02 16:21:46 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:21:46 [INFO] src.processing.cleaner — Columns after normalisation: ['Product_Code', 'Warehouse', 'Product_Category', 'Date', 'Order_Demand']
+2026-05-02 16:21:46 [INFO] src.processing.cleaner — Schema validation passed.
+2026-05-02 16:21:50 [INFO] src.processing.cleaner — Duplicates removed: 122423 rows dropped (1048575 → 926152).
+2026-05-02 16:21:50 [INFO] src.processing.cleaner — Categorical columns trimmed and upper-cased.
+2026-05-02 16:21:52 [WARNING] src.processing.cleaner — 1880 rows could not be parsed with any date format.
+2026-05-02 16:21:52 [INFO] src.processing.cleaner — Date column parsed to DateType.
+2026-05-02 16:21:54 [INFO] src.processing.cleaner — Order_Demand parsed to LongType.
+2026-05-02 16:21:57 [INFO] src.processing.cleaner — CLEANING: Dropped 6798 negative demand rows.
+2026-05-02 16:21:57 [INFO] src.processing.cleaner — VALID DATASET: 919354 rows (includes zeros).
+2026-05-02 16:22:00 [INFO] src.processing.cleaner — Rows dropped (null key/date): 886
+2026-05-02 16:22:02 [INFO] src.processing.cleaner — NULL Order_Demand rows: 0 (strategy: drop)
+2026-05-02 16:22:09 [INFO] src.processing.cleaner — Outliers flagged (IQR × 3.0): 103062 rows.
+2026-05-02 16:22:12 [INFO] src.processing.cleaner — Sparse products flagged (< 10 records): 29 products.
+2026-05-02 16:22:13 [INFO] src.processing.cleaner — Temporal enrichment columns added.
+2026-05-02 16:22:14 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 16:22:14 [INFO] src.processing.cleaner — CLEANING SUMMARY
+2026-05-02 16:22:14 [INFO] src.processing.cleaner —   Total rows          : 918468
+2026-05-02 16:22:16 [INFO] src.processing.cleaner —   Distinct products   : 2160
+2026-05-02 16:22:17 [INFO] src.processing.cleaner —   Distinct warehouses : 4
+2026-05-02 16:22:20 [INFO] src.processing.cleaner —   Date range          : 2011-01-08 → 2017-01-09
+2026-05-02 16:22:21 [INFO] src.processing.cleaner —   NULL Order_Demand   : 0
+2026-05-02 16:22:23 [INFO] src.processing.cleaner —   Negative demand     : 0
+2026-05-02 16:22:24 [INFO] src.processing.cleaner —   Zero demand         : 19639
+2026-05-02 16:22:28 [INFO] src.processing.cleaner —   Outlier rows        : 103062
+2026-05-02 16:22:30 [INFO] src.processing.cleaner —   Sparse products     : 145 rows
+2026-05-02 16:22:31 [INFO] src.processing.cleaner —   Date parse failures : 0
+2026-05-02 16:22:31 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 16:22:31 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:22:31 [INFO] __main__ — STEP 3/3 — Writing processed data
+2026-05-02 16:22:31 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:22:31 [INFO] src.infrastructure.writer — Writing to MinIO: s3a://processed/demand_cleaned (format=parquet)
+2026-05-02 16:22:38 [INFO] src.infrastructure.writer — Wrote PARQUET data to s3a://processed/demand_cleaned (partitioned by ['Warehouse']).
+2026-05-02 16:22:38 [INFO] __main__ — Pipeline completed in 56.5 seconds.
+2026-05-02 16:22:39 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 16:49:29 [INFO] __main__ — SparkSession created: DemandForecastingCleaner (master=local[*])
+2026-05-02 16:49:29 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:49:29 [INFO] __main__ — STEP 1/3 — Reading raw data
+2026-05-02 16:49:29 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:49:29 [INFO] src.infrastructure.reader — Reading from MinIO: s3a://raw/Historical Product Demand.csv
+2026-05-02 16:49:34 [INFO] src.infrastructure.reader — Loaded 5 columns from MinIO source.
+2026-05-02 16:49:34 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:49:34 [INFO] __main__ — STEP 2/3 — Cleaning
+2026-05-02 16:49:34 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:49:34 [INFO] src.processing.cleaner — Columns after normalisation: ['Product_Code', 'Warehouse', 'Product_Category', 'Date', 'Order_Demand']
+2026-05-02 16:49:34 [INFO] src.processing.cleaner — Schema validation passed.
+2026-05-02 16:49:39 [INFO] src.processing.cleaner — Duplicates removed: 122423 rows dropped (1048575 → 926152).
+2026-05-02 16:49:39 [INFO] src.processing.cleaner — Categorical columns trimmed and upper-cased.
+2026-05-02 16:49:40 [WARNING] src.processing.cleaner — 1880 rows could not be parsed with any date format.
+2026-05-02 16:49:40 [INFO] src.processing.cleaner — Date column parsed to DateType.
+2026-05-02 16:49:42 [INFO] src.processing.cleaner — Order_Demand parsed to LongType.
+2026-05-02 16:49:45 [INFO] src.processing.cleaner — CLEANING: Dropped 6798 negative demand rows.
+2026-05-02 16:49:45 [INFO] src.processing.cleaner — VALID DATASET: 919354 rows (includes zeros).
+2026-05-02 16:49:48 [INFO] src.processing.cleaner — Rows dropped (null key/date): 886
+2026-05-02 16:49:50 [INFO] src.processing.cleaner — NULL Order_Demand rows: 0 (strategy: drop)
+2026-05-02 16:49:57 [INFO] src.processing.cleaner — Outliers flagged (IQR × 3.0): 103062 rows.
+2026-05-02 16:50:01 [INFO] src.processing.cleaner — Sparse products flagged (< 10 records): 29 products.
+2026-05-02 16:50:01 [INFO] src.processing.cleaner — Temporal enrichment columns added.
+2026-05-02 16:50:02 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 16:50:02 [INFO] src.processing.cleaner — CLEANING SUMMARY
+2026-05-02 16:50:02 [INFO] src.processing.cleaner —   Total rows          : 918468
+2026-05-02 16:50:04 [INFO] src.processing.cleaner —   Distinct products   : 2160
+2026-05-02 16:50:05 [INFO] src.processing.cleaner —   Distinct warehouses : 4
+2026-05-02 16:50:08 [INFO] src.processing.cleaner —   Date range          : 2011-01-08 → 2017-01-09
+2026-05-02 16:50:10 [INFO] src.processing.cleaner —   NULL Order_Demand   : 0
+2026-05-02 16:50:11 [INFO] src.processing.cleaner —   Negative demand     : 0
+2026-05-02 16:50:13 [INFO] src.processing.cleaner —   Zero demand         : 19639
+2026-05-02 16:50:17 [INFO] src.processing.cleaner —   Outlier rows        : 103062
+2026-05-02 16:50:19 [INFO] src.processing.cleaner —   Sparse products     : 145 rows
+2026-05-02 16:50:21 [INFO] src.processing.cleaner —   Date parse failures : 0
+2026-05-02 16:50:21 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 16:50:21 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:50:21 [INFO] __main__ — STEP 3/3 — Writing processed data
+2026-05-02 16:50:21 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 16:50:21 [INFO] src.infrastructure.writer — Writing to MinIO: s3a://processed/demand_cleaned (format=parquet)
+2026-05-02 16:50:27 [INFO] src.infrastructure.writer — Wrote PARQUET data to s3a://processed/demand_cleaned (partitioned by ['Warehouse']).
+2026-05-02 16:50:27 [INFO] __main__ — Pipeline completed in 58.2 seconds.
+2026-05-02 16:50:27 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 19:41:39 [INFO] __main__ — SparkSession created: DemandForecastingCleaner (master=local[*])
+2026-05-02 19:41:39 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:41:39 [INFO] __main__ — STEP 1/3 — Reading raw data
+2026-05-02 19:41:39 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:41:39 [INFO] src.infrastructure.reader — Reading from MinIO: s3a://raw/Historical Product Demand.csv
+2026-05-02 19:41:45 [INFO] src.infrastructure.reader — Loaded 5 columns from MinIO source.
+2026-05-02 19:41:45 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:41:45 [INFO] __main__ — STEP 2/3 — Cleaning
+2026-05-02 19:41:45 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:41:45 [INFO] src.processing.cleaner — Columns after normalisation: ['Product_Code', 'Warehouse', 'Product_Category', 'Date', 'Order_Demand']
+2026-05-02 19:41:45 [INFO] src.processing.cleaner — Schema validation passed.
+2026-05-02 19:41:49 [INFO] src.processing.cleaner — Duplicates removed: 122423 rows dropped (1048575 → 926152).
+2026-05-02 19:41:49 [INFO] src.processing.cleaner — Categorical columns trimmed and upper-cased.
+2026-05-02 19:41:51 [WARNING] src.processing.cleaner — 1880 rows could not be parsed with any date format.
+2026-05-02 19:41:51 [INFO] src.processing.cleaner — Date column parsed to DateType.
+2026-05-02 19:41:52 [INFO] src.processing.cleaner — Order_Demand parsed to LongType.
+2026-05-02 19:41:55 [INFO] src.processing.cleaner — CLEANING: Dropped 6798 negative demand rows.
+2026-05-02 19:41:55 [INFO] src.processing.cleaner — VALID DATASET: 919354 rows (includes zeros).
+2026-05-02 19:41:58 [INFO] src.processing.cleaner — Rows dropped (null key/date): 886
+2026-05-02 19:42:00 [INFO] src.processing.cleaner — NULL Order_Demand rows: 0 (strategy: drop)
+2026-05-02 19:42:08 [INFO] src.processing.cleaner — Outliers flagged (IQR × 3.0): 103062 rows.
+2026-05-02 19:42:11 [INFO] src.processing.cleaner — Sparse products flagged (< 10 records): 29 products.
+2026-05-02 19:42:11 [INFO] src.processing.cleaner — Temporal enrichment columns added.
+2026-05-02 19:42:13 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 19:42:13 [INFO] src.processing.cleaner — CLEANING SUMMARY
+2026-05-02 19:42:13 [INFO] src.processing.cleaner —   Total rows          : 918468
+2026-05-02 19:42:14 [INFO] src.processing.cleaner —   Distinct products   : 2160
+2026-05-02 19:42:16 [INFO] src.processing.cleaner —   Distinct warehouses : 4
+2026-05-02 19:42:19 [INFO] src.processing.cleaner —   Date range          : 2011-01-08 → 2017-01-09
+2026-05-02 19:42:20 [INFO] src.processing.cleaner —   NULL Order_Demand   : 0
+2026-05-02 19:42:22 [INFO] src.processing.cleaner —   Negative demand     : 0
+2026-05-02 19:42:23 [INFO] src.processing.cleaner —   Zero demand         : 19639
+2026-05-02 19:42:28 [INFO] src.processing.cleaner —   Outlier rows        : 103062
+2026-05-02 19:42:30 [INFO] src.processing.cleaner —   Sparse products     : 145 rows
+2026-05-02 19:42:32 [INFO] src.processing.cleaner —   Date parse failures : 0
+2026-05-02 19:42:32 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 19:42:32 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:42:32 [INFO] __main__ — STEP 3/3 — Writing processed data
+2026-05-02 19:42:32 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:42:32 [INFO] src.infrastructure.writer — Writing to MinIO: s3a://processed/demand_cleaned (format=parquet)
+2026-05-02 19:42:39 [INFO] src.infrastructure.writer — Wrote PARQUET data to s3a://processed/demand_cleaned (partitioned by ['Warehouse']).
+2026-05-02 19:42:39 [INFO] __main__ — Pipeline completed in 60.2 seconds.
+2026-05-02 19:42:39 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 19:44:41 [INFO] __main__ — SparkSession created: DemandForecastingCleaner (master=local[*])
+2026-05-02 19:44:41 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:44:41 [INFO] __main__ — STEP 1/3 — Reading raw data
+2026-05-02 19:44:41 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:44:41 [INFO] src.infrastructure.reader — Reading from MinIO: s3a://raw/Historical Product Demand.csv
+2026-05-02 19:44:46 [INFO] src.infrastructure.reader — Loaded 5 columns from MinIO source.
+2026-05-02 19:44:46 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:44:46 [INFO] __main__ — STEP 2/3 — Cleaning
+2026-05-02 19:44:46 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:44:46 [INFO] src.processing.cleaner — Columns after normalisation: ['Product_Code', 'Warehouse', 'Product_Category', 'Date', 'Order_Demand']
+2026-05-02 19:44:46 [INFO] src.processing.cleaner — Schema validation passed.
+2026-05-02 19:44:50 [INFO] src.processing.cleaner — Duplicates removed: 122423 rows dropped (1048575 → 926152).
+2026-05-02 19:44:50 [INFO] src.processing.cleaner — Categorical columns trimmed and upper-cased.
+2026-05-02 19:44:52 [WARNING] src.processing.cleaner — 1880 rows could not be parsed with any date format.
+2026-05-02 19:44:52 [INFO] src.processing.cleaner — Date column parsed to DateType.
+2026-05-02 19:44:53 [INFO] src.processing.cleaner — Order_Demand parsed to LongType.
+2026-05-02 19:44:56 [INFO] src.processing.cleaner — CLEANING: Dropped 6798 negative demand rows.
+2026-05-02 19:44:56 [INFO] src.processing.cleaner — VALID DATASET: 919354 rows (includes zeros).
+2026-05-02 19:44:59 [INFO] src.processing.cleaner — Rows dropped (null key/date): 886
+2026-05-02 19:45:01 [INFO] src.processing.cleaner — NULL Order_Demand rows: 0 (strategy: drop)
+2026-05-02 19:45:09 [INFO] src.processing.cleaner — Outliers flagged (IQR × 3.0): 103062 rows.
+2026-05-02 19:45:12 [INFO] src.processing.cleaner — Sparse products flagged (< 10 records): 29 products.
+2026-05-02 19:45:12 [INFO] src.processing.cleaner — Temporal enrichment columns added.
+2026-05-02 19:45:14 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 19:45:14 [INFO] src.processing.cleaner — CLEANING SUMMARY
+2026-05-02 19:45:14 [INFO] src.processing.cleaner —   Total rows          : 918468
+2026-05-02 19:45:15 [INFO] src.processing.cleaner —   Distinct products   : 2160
+2026-05-02 19:45:17 [INFO] src.processing.cleaner —   Distinct warehouses : 4
+2026-05-02 19:45:20 [INFO] src.processing.cleaner —   Date range          : 2011-01-08 → 2017-01-09
+2026-05-02 19:45:22 [INFO] src.processing.cleaner —   NULL Order_Demand   : 0
+2026-05-02 19:45:23 [INFO] src.processing.cleaner —   Negative demand     : 0
+2026-05-02 19:45:25 [INFO] src.processing.cleaner —   Zero demand         : 19639
+2026-05-02 19:45:30 [INFO] src.processing.cleaner —   Outlier rows        : 103062
+2026-05-02 19:45:32 [INFO] src.processing.cleaner —   Sparse products     : 145 rows
+2026-05-02 19:45:34 [INFO] src.processing.cleaner —   Date parse failures : 0
+2026-05-02 19:45:34 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 19:45:34 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:45:34 [INFO] __main__ — STEP 3/3 — Writing processed data
+2026-05-02 19:45:34 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:45:34 [INFO] src.infrastructure.writer — Writing to MinIO: s3a://processed/demand_cleaned (format=parquet)
+2026-05-02 19:45:40 [INFO] src.infrastructure.writer — Wrote PARQUET data to s3a://processed/demand_cleaned (partitioned by ['Warehouse']).
+2026-05-02 19:45:40 [INFO] __main__ — Pipeline completed in 59.7 seconds.
+2026-05-02 19:45:41 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 19:53:03 [INFO] __main__ — SparkSession created: DemandForecastingCleaner (master=local[*])
+2026-05-02 19:53:03 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:53:03 [INFO] __main__ — STEP 1/3 — Reading raw data
+2026-05-02 19:53:03 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:53:03 [INFO] src.infrastructure.reader — Reading from MinIO: s3a://raw/Historical Product Demand.csv
+2026-05-02 19:53:09 [INFO] src.infrastructure.reader — Loaded 5 columns from MinIO source.
+2026-05-02 19:53:09 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:53:09 [INFO] __main__ — STEP 2/3 — Cleaning
+2026-05-02 19:53:09 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:53:09 [INFO] src.processing.cleaner — Columns after normalisation: ['Product_Code', 'Warehouse', 'Product_Category', 'Date', 'Order_Demand']
+2026-05-02 19:53:09 [INFO] src.processing.cleaner — Schema validation passed.
+2026-05-02 19:53:12 [INFO] src.processing.cleaner — Duplicates removed: 122423 rows dropped (1048575 → 926152).
+2026-05-02 19:53:12 [INFO] src.processing.cleaner — Categorical columns trimmed and upper-cased.
+2026-05-02 19:53:14 [WARNING] src.processing.cleaner — 1880 rows could not be parsed with any date format.
+2026-05-02 19:53:14 [INFO] src.processing.cleaner — Date column parsed to DateType.
+2026-05-02 19:53:15 [INFO] src.processing.cleaner — Order_Demand parsed to LongType.
+2026-05-02 19:53:18 [INFO] src.processing.cleaner — CLEANING: Dropped 6798 negative demand rows.
+2026-05-02 19:53:18 [INFO] src.processing.cleaner — VALID DATASET: 919354 rows (includes zeros).
+2026-05-02 19:53:22 [INFO] src.processing.cleaner — Rows dropped (null key/date): 886
+2026-05-02 19:53:23 [INFO] src.processing.cleaner — NULL Order_Demand rows: 0 (strategy: drop)
+2026-05-02 19:53:31 [INFO] src.processing.cleaner — Outliers flagged (IQR × 3.0): 103062 rows.
+2026-05-02 19:53:34 [INFO] src.processing.cleaner — Sparse products flagged (< 10 records): 29 products.
+2026-05-02 19:53:34 [INFO] src.processing.cleaner — Temporal enrichment columns added.
+2026-05-02 19:53:35 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 19:53:35 [INFO] src.processing.cleaner — CLEANING SUMMARY
+2026-05-02 19:53:35 [INFO] src.processing.cleaner —   Total rows          : 918468
+2026-05-02 19:53:37 [INFO] src.processing.cleaner —   Distinct products   : 2160
+2026-05-02 19:53:38 [INFO] src.processing.cleaner —   Distinct warehouses : 4
+2026-05-02 19:53:41 [INFO] src.processing.cleaner —   Date range          : 2011-01-08 → 2017-01-09
+2026-05-02 19:53:43 [INFO] src.processing.cleaner —   NULL Order_Demand   : 0
+2026-05-02 19:53:44 [INFO] src.processing.cleaner —   Negative demand     : 0
+2026-05-02 19:53:45 [INFO] src.processing.cleaner —   Zero demand         : 19639
+2026-05-02 19:53:50 [INFO] src.processing.cleaner —   Outlier rows        : 103062
+2026-05-02 19:53:52 [INFO] src.processing.cleaner —   Sparse products     : 145 rows
+2026-05-02 19:53:53 [INFO] src.processing.cleaner —   Date parse failures : 0
+2026-05-02 19:53:53 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 19:53:53 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:53:53 [INFO] __main__ — STEP 3/3 — Writing processed data
+2026-05-02 19:53:53 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 19:53:53 [INFO] src.infrastructure.writer — Writing to MinIO: s3a://processed/demand_cleaned (format=parquet)
+2026-05-02 19:54:00 [INFO] src.infrastructure.writer — Wrote PARQUET data to s3a://processed/demand_cleaned (partitioned by ['Warehouse']).
+2026-05-02 19:54:00 [INFO] __main__ — Pipeline completed in 57.1 seconds.
+2026-05-02 19:54:01 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 20:40:06 [INFO] __main__ — SparkSession created: DemandForecastingCleaner (master=local[*])
+2026-05-02 20:40:06 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:40:06 [INFO] __main__ — STEP 1/3 — Reading raw data
+2026-05-02 20:40:06 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:40:06 [INFO] src.infrastructure.reader — Reading from MinIO: s3a://raw/Historical Product Demand.csv
+2026-05-02 20:40:12 [INFO] src.infrastructure.reader — Loaded 5 columns from MinIO source.
+2026-05-02 20:40:12 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:40:12 [INFO] __main__ — STEP 2/3 — Cleaning
+2026-05-02 20:40:12 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:40:12 [INFO] src.processing.cleaner — Columns after normalisation: ['Product_Code', 'Warehouse', 'Product_Category', 'Date', 'Order_Demand']
+2026-05-02 20:40:12 [INFO] src.processing.cleaner — Schema validation passed.
+2026-05-02 20:40:16 [INFO] src.processing.cleaner — Duplicates removed: 122423 rows dropped (1048575 → 926152).
+2026-05-02 20:40:16 [INFO] src.processing.cleaner — Categorical columns trimmed and upper-cased.
+2026-05-02 20:40:17 [WARNING] src.processing.cleaner — 1880 rows could not be parsed with any date format.
+2026-05-02 20:40:17 [INFO] src.processing.cleaner — Date column parsed to DateType.
+2026-05-02 20:40:19 [INFO] src.processing.cleaner — Order_Demand parsed to LongType.
+2026-05-02 20:40:21 [INFO] src.processing.cleaner — CLEANING: Dropped 6798 negative demand rows.
+2026-05-02 20:40:21 [INFO] src.processing.cleaner — VALID DATASET: 919354 rows (includes zeros).
+2026-05-02 20:40:25 [INFO] src.processing.cleaner — Rows dropped (null key/date): 886
+2026-05-02 20:40:26 [INFO] src.processing.cleaner — NULL Order_Demand rows: 0 (strategy: drop)
+2026-05-02 20:40:33 [INFO] src.processing.cleaner — Outliers flagged (IQR × 3.0): 103062 rows.
+2026-05-02 20:40:37 [INFO] src.processing.cleaner — Sparse products flagged (< 10 records): 29 products.
+2026-05-02 20:40:37 [INFO] src.processing.cleaner — Temporal enrichment columns added.
+2026-05-02 20:40:38 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 20:40:38 [INFO] src.processing.cleaner — CLEANING SUMMARY
+2026-05-02 20:40:38 [INFO] src.processing.cleaner —   Total rows          : 918468
+2026-05-02 20:40:39 [INFO] src.processing.cleaner —   Distinct products   : 2160
+2026-05-02 20:40:41 [INFO] src.processing.cleaner —   Distinct warehouses : 4
+2026-05-02 20:40:44 [INFO] src.processing.cleaner —   Date range          : 2011-01-08 → 2017-01-09
+2026-05-02 20:40:45 [INFO] src.processing.cleaner —   NULL Order_Demand   : 0
+2026-05-02 20:40:47 [INFO] src.processing.cleaner —   Negative demand     : 0
+2026-05-02 20:40:48 [INFO] src.processing.cleaner —   Zero demand         : 19639
+2026-05-02 20:40:53 [INFO] src.processing.cleaner —   Outlier rows        : 103062
+2026-05-02 20:40:55 [INFO] src.processing.cleaner —   Sparse products     : 145 rows
+2026-05-02 20:40:56 [INFO] src.processing.cleaner —   Date parse failures : 0
+2026-05-02 20:40:56 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 20:40:56 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:40:56 [INFO] __main__ — STEP 3/3 — Writing processed data
+2026-05-02 20:40:56 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 20:40:56 [INFO] src.infrastructure.writer — Writing to MinIO: s3a://processed/demand_cleaned (format=parquet)
+2026-05-02 20:41:03 [INFO] src.infrastructure.writer — Wrote PARQUET data to s3a://processed/demand_cleaned (partitioned by ['Warehouse']).
+2026-05-02 20:41:03 [INFO] __main__ — Pipeline completed in 56.6 seconds.
+2026-05-02 20:41:03 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 20:55:56 [ERROR] root — KeyboardInterrupt while sending command.
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.13/site-packages/py4j/java_gateway.py", line 1038, in send_command
+    response = connection.send_command(command)
+  File "/app/.venv/lib/python3.13/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+                          ~~~~~~~~~~~~~~~~~~~~^^
+  File "/root/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/lib/python3.13/socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+KeyboardInterrupt
+2026-05-02 20:55:56 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 20:55:56 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 20:55:56 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 21:26:03 [INFO] __main__ — SparkSession created: DemandForecastingCleaner (master=local[*])
+2026-05-02 21:26:03 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:26:03 [INFO] __main__ — STEP 1/3 — Reading raw data
+2026-05-02 21:26:03 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:26:03 [INFO] src.infrastructure.reader — Reading from local path: data/raw/Historical Product Demand.csv
+2026-05-02 21:26:05 [INFO] py4j.clientserver — Closing down clientserver connection
+2026-05-02 21:27:26 [INFO] __main__ — SparkSession created: DemandForecastingCleaner (master=local[*])
+2026-05-02 21:27:26 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:27:26 [INFO] __main__ — STEP 1/3 — Reading raw data
+2026-05-02 21:27:26 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:27:26 [INFO] src.infrastructure.reader — Reading from MinIO: s3a://raw/Historical Product Demand.csv
+2026-05-02 21:27:30 [INFO] src.infrastructure.reader — Loaded 5 columns from MinIO source.
+2026-05-02 21:27:30 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:27:30 [INFO] __main__ — STEP 2/3 — Cleaning
+2026-05-02 21:27:30 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:27:30 [INFO] src.processing.cleaner — Columns after normalisation: ['Product_Code', 'Warehouse', 'Product_Category', 'Date', 'Order_Demand']
+2026-05-02 21:27:30 [INFO] src.processing.cleaner — Schema validation passed.
+2026-05-02 21:27:33 [INFO] src.processing.cleaner — Duplicates removed: 122423 rows dropped (1048575 → 926152).
+2026-05-02 21:27:33 [INFO] src.processing.cleaner — Categorical columns trimmed and upper-cased.
+2026-05-02 21:27:33 [INFO] src.processing.cleaner — Repartitioned data into 100 partitions by ['Warehouse'].
+2026-05-02 21:27:35 [WARNING] src.processing.cleaner — 1880 rows could not be parsed with any date format.
+2026-05-02 21:27:35 [INFO] src.processing.cleaner — Date column parsed to DateType.
+2026-05-02 21:27:36 [INFO] src.processing.cleaner — Order_Demand parsed to LongType.
+2026-05-02 21:27:39 [INFO] src.processing.cleaner — CLEANING: Dropped 6798 negative demand rows.
+2026-05-02 21:27:39 [INFO] src.processing.cleaner — VALID DATASET: 919354 rows (includes zeros).
+2026-05-02 21:27:43 [INFO] src.processing.cleaner — Rows dropped (null key/date): 886
+2026-05-02 21:27:44 [INFO] src.processing.cleaner — NULL Order_Demand rows: 0 (strategy: drop)
+2026-05-02 21:27:53 [INFO] src.processing.cleaner — Outliers flagged (IQR × 3.0): 103062 rows.
+2026-05-02 21:27:56 [INFO] src.processing.cleaner — Sparse products flagged (< 10 records): 29 products.
+2026-05-02 21:27:56 [INFO] src.processing.cleaner — Temporal enrichment columns added.
+2026-05-02 21:27:57 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 21:27:57 [INFO] src.processing.cleaner — CLEANING SUMMARY
+2026-05-02 21:27:57 [INFO] src.processing.cleaner —   Total rows          : 918468
+2026-05-02 21:27:59 [INFO] src.processing.cleaner —   Distinct products   : 2160
+2026-05-02 21:28:01 [INFO] src.processing.cleaner —   Distinct warehouses : 4
+2026-05-02 21:28:07 [INFO] src.processing.cleaner —   Date range          : 2011-01-08 → 2017-01-09
+2026-05-02 21:28:08 [INFO] src.processing.cleaner —   NULL Order_Demand   : 0
+2026-05-02 21:28:10 [INFO] src.processing.cleaner —   Negative demand     : 0
+2026-05-02 21:28:11 [INFO] src.processing.cleaner —   Zero demand         : 19639
+2026-05-02 21:28:16 [INFO] src.processing.cleaner —   Outlier rows        : 103062
+2026-05-02 21:28:19 [INFO] src.processing.cleaner —   Sparse products     : 145 rows
+2026-05-02 21:28:20 [INFO] src.processing.cleaner —   Date parse failures : 0
+2026-05-02 21:28:20 [INFO] src.processing.cleaner — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:20 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:20 [INFO] __main__ — STEP 3/3 — Writing processed data
+2026-05-02 21:28:20 [INFO] __main__ — ════════════════════════════════════════════════════════════
+2026-05-02 21:28:20 [INFO] src.infrastructure.writer — Writing to MinIO: s3a://processed/demand_cleaned (format=parquet)
+2026-05-02 21:28:26 [INFO] src.infrastructure.writer — Wrote PARQUET data to s3a://processed/demand_cleaned (partitioned by ['Warehouse']).
+2026-05-02 21:28:26 [INFO] __main__ — Pipeline completed in 60.3 seconds.
+2026-05-02 21:28:26 [INFO] py4j.clientserver — Closing down clientserver connection

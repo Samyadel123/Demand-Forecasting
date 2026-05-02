@@ -21,7 +21,10 @@ logger = logging.getLogger(__name__)
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
-def _configure_s3a(spark: SparkSession, endpoint: str, access_key: str, secret_key: str) -> None:
+
+def _configure_s3a(
+    spark: SparkSession, endpoint: str, access_key: str, secret_key: str
+) -> None:
     """Inject S3A / MinIO Hadoop configuration into an existing SparkSession."""
     hadoop_conf = spark.sparkContext._jsc.hadoopConfiguration()
     hadoop_conf.set("fs.s3a.endpoint", endpoint)
@@ -41,6 +44,7 @@ def _configure_s3a(spark: SparkSession, endpoint: str, access_key: str, secret_k
 
 # ─── Public API ───────────────────────────────────────────────────────────────
 
+
 def read_from_minio(
     spark: SparkSession,
     endpoint: str,
@@ -49,7 +53,7 @@ def read_from_minio(
     bucket: str,
     object_key: str,
     header: bool = True,
-    infer_schema: bool = False,   # keep everything as string; cleaner casts explicitly
+    infer_schema: bool = False,  # keep everything as string; cleaner casts explicitly
 ) -> DataFrame:
     """
     Read a CSV from a MinIO bucket into a Spark DataFrame.
@@ -74,8 +78,7 @@ def read_from_minio(
     logger.info("Reading from MinIO: %s", s3_path)
 
     df = (
-        spark.read
-        .option("header", str(header).lower())
+        spark.read.option("header", str(header).lower())
         .option("inferSchema", str(infer_schema).lower())
         .option("multiLine", "false")
         .option("quote", '"')
@@ -110,8 +113,7 @@ def read_from_local(
     logger.info("Reading from local path: %s", path)
 
     df = (
-        spark.read
-        .option("header", str(header).lower())
+        spark.read.option("header", str(header).lower())
         .option("inferSchema", str(infer_schema).lower())
         .option("quote", '"')
         .option("escape", '"')
@@ -131,6 +133,62 @@ def read_from_hdfs(
     """Read a CSV from HDFS using Spark's built-in HDFS support."""
     logger.info("Reading from HDFS path: %s", path)
     return read_from_local(spark, path, header=header, infer_schema=infer_schema)
+
+
+def load_cleaned_data(
+    spark: SparkSession, cfg: dict, format: str = "parquet"
+) -> DataFrame:
+    """
+    Load the pre-processed (cleaned) data for feature engineering and training.
+
+    Parameters
+    ----------
+    spark  : Active SparkSession.
+    cfg    : Full config dict (as loaded from training_config.yaml).
+    format : The file format of the cleaned data (defaults to "parquet").
+
+    Returns
+    -------
+    Cleaned Spark DataFrame.
+    """
+    source = cfg["data"]["source"]
+
+    if source == "minio":
+        minio_cfg = cfg["data"]["minio"]
+
+        # Determine the bucket (defaulting to the main bucket if clean_bucket isn't set)
+        bucket = minio_cfg.get("clean_bucket", minio_cfg["bucket"])
+
+        # Point to the ROOT of the partitioned directory, not a specific file
+        object_key = minio_cfg.get("clean_object_key", "demand_cleaned")
+
+        s3_path = f"s3a://{bucket}/{object_key.lstrip('/')}"
+
+        logger.info("Loading partitioned data from MinIO: %s", s3_path)
+
+        # Ensure S3A is configured in the current session
+        _configure_s3a(
+            spark,
+            endpoint=minio_cfg["endpoint"],
+            access_key=minio_cfg["access_key"],
+            secret_key=minio_cfg["secret_key"],
+        )
+
+        # Spark will automatically discover the Warehouse=... partitions
+        df = spark.read.format(format).load(s3_path)
+
+    elif source == "local":
+        path = cfg["data"]["local"].get(
+            "processed_path", "data/processed/demand_cleaned"
+        )
+        logger.info("Loading partitioned data from local path: %s", path)
+        df = spark.read.format(format).load(path)
+
+    else:
+        raise ValueError(f"Unknown data source '{source}'. Use 'minio' or 'local'.")
+
+    logger.info("Loaded %d columns from cleaned data source.", len(df.columns))
+    return df
 
 
 def read(spark: SparkSession, cfg: dict) -> DataFrame:
@@ -163,4 +221,6 @@ def read(spark: SparkSession, cfg: dict) -> DataFrame:
     elif source == "hdfs":
         return read_from_hdfs(spark, cfg["data"]["hdfs"]["raw_path"])
     else:
-        raise ValueError(f"Unknown data source '{source}'. Use 'minio', 'local', or 'hdfs'.")
+        raise ValueError(
+            f"Unknown data source '{source}'. Use 'minio', 'local', or 'hdfs'."
+        )

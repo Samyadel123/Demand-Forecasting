@@ -104,112 +104,112 @@ services:
     networks:
       - minio_net
 
-  # ─────────────────────────────────────────────
-  # HDFS NameNode — Hadoop Distributed File System
-  # Tracks metadata and manages file system
-  # ─────────────────────────────────────────────
-  hdfs-namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.3.4-java11
-    container_name: hdfs_namenode
-    restart: unless-stopped
-    environment:
-      CLUSTER_NAME: "demand-forecast-cluster"
-      CORE_CONF_fs_defaultFS: "hdfs://hdfs-namenode:8020"
-      CORE_CONF_hadoop_http_staticuser_user_name: "root"
-      CORE_CONF_hadoop_proxyuser_root_groups: "*"
-      CORE_CONF_hadoop_proxyuser_root_hosts: "*"
-      HDFS_CONF_dfs_namenode_rpc___bind___host: "0.0.0.0"
-      HDFS_CONF_dfs_namenode_servicerpc___bind___host: "0.0.0.0"
-      HDFS_CONF_dfs_namenode_http___bind___host: "0.0.0.0"
-      HDFS_CONF_dfs_namenode_https___bind___host: "0.0.0.0"
-      HDFS_CONF_dfs_replication: "2"
-    ports:
-      - "9870:9870"   # NameNode Web UI
-      - "8020:8020"   # NameNode RPC
-    volumes:
-      - hdfs_namenode:/hadoop/dfs/name
-    networks:
-      - minio_net
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9870"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
-  # ─────────────────────────────────────────────
-  # HDFS DataNode 1 — Stores actual data blocks
-  # ─────────────────────────────────────────────
-  hdfs-datanode-1:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.3.4-java11
-    container_name: hdfs_datanode_1
-    restart: unless-stopped
-    environment:
-      SERVICE_PRECONDITION: "hdfs-namenode:8020"
-      CORE_CONF_fs_defaultFS: "hdfs://hdfs-namenode:8020"
-      CORE_CONF_hadoop_http_staticuser_user_name: "root"
-      CORE_CONF_hadoop_proxyuser_root_groups: "*"
-      CORE_CONF_hadoop_proxyuser_root_hosts: "*"
-      HDFS_CONF_dfs_datanode_http___bind___host: "0.0.0.0"
-      HDFS_CONF_dfs_datanode_address: "0.0.0.0:50010"
-      HDFS_CONF_dfs_datanode_ipc___address: "0.0.0.0:50020"
-    depends_on:
-      hdfs-namenode:
-        condition: service_healthy
-    ports:
-      - "9864:9864"   # DataNode Web UI
-    volumes:
-      - hdfs_datanode_1:/hadoop/dfs/data
-    networks:
-      - minio_net
-
-  # ─────────────────────────────────────────────
-  # HDFS DataNode 2 — For replication
-  # ─────────────────────────────────────────────
-  hdfs-datanode-2:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.3.4-java11
-    container_name: hdfs_datanode_2
-    restart: unless-stopped
-    environment:
-      SERVICE_PRECONDITION: "hdfs-namenode:8020"
-      CORE_CONF_fs_defaultFS: "hdfs://hdfs-namenode:8020"
-      CORE_CONF_hadoop_http_staticuser_user_name: "root"
-      CORE_CONF_hadoop_proxyuser_root_groups: "*"
-      CORE_CONF_hadoop_proxyuser_root_hosts: "*"
-      HDFS_CONF_dfs_datanode_http___bind___host: "0.0.0.0"
-      HDFS_CONF_dfs_datanode_address: "0.0.0.0:50010"
-      HDFS_CONF_dfs_datanode_ipc___address: "0.0.0.0:50020"
-    depends_on:
-      hdfs-namenode:
-        condition: service_healthy
-    ports:
-      - "9865:9864"   # DataNode Web UI
-    volumes:
-      - hdfs_datanode_2:/hadoop/dfs/data
-    networks:
-      - minio_net
+  # # ─────────────────────────────────────────────
+  # # HDFS NameNode — Hadoop Distributed File System
+  # # Tracks metadata and manages file system
+  # # ─────────────────────────────────────────────
+  # hdfs-namenode:
+  #   image: bitnami/hadoop-namenode:3
+  #   container_name: hdfs_namenode
+  #   restart: unless-stopped
+  #   environment:
+  #     CLUSTER_NAME: "demand-forecast-cluster"
+  #     CORE_CONF_fs_defaultFS: "hdfs://hdfs-namenode:8020"
+  #     CORE_CONF_hadoop_http_staticuser_user_name: "root"
+  #     CORE_CONF_hadoop_proxyuser_root_groups: "*"
+  #     CORE_CONF_hadoop_proxyuser_root_hosts: "*"
+  #     HDFS_CONF_dfs_namenode_rpc___bind___host: "0.0.0.0"
+  #     HDFS_CONF_dfs_namenode_servicerpc___bind___host: "0.0.0.0"
+  #     HDFS_CONF_dfs_namenode_http___bind___host: "0.0.0.0"
+  #     HDFS_CONF_dfs_namenode_https___bind___host: "0.0.0.0"
+  #     HDFS_CONF_dfs_replication: "2"
+  #   ports:
+  #     - "9870:9870"   # NameNode Web UI
+  #     - "8020:8020"   # NameNode RPC
+  #   volumes:
+  #     - hdfs_namenode:/hadoop/dfs/name
+  #   networks:
+  #     - minio_net
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9870"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 10s
+  #
+  # # ─────────────────────────────────────────────
+  # # HDFS DataNode 1 — Stores actual data blocks
+  # # ─────────────────────────────────────────────
+  # hdfs-datanode-1:
+  #   image: bitnami/hadoop-datanode:3
+  #   container_name: hdfs_datanode_1
+  #   restart: unless-stopped
+  #   environment:
+  #     SERVICE_PRECONDITION: "hdfs-namenode:8020"
+  #     CORE_CONF_fs_defaultFS: "hdfs://hdfs-namenode:8020"
+  #     CORE_CONF_hadoop_http_staticuser_user_name: "root"
+  #     CORE_CONF_hadoop_proxyuser_root_groups: "*"
+  #     CORE_CONF_hadoop_proxyuser_root_hosts: "*"
+  #     HDFS_CONF_dfs_datanode_http___bind___host: "0.0.0.0"
+  #     HDFS_CONF_dfs_datanode_address: "0.0.0.0:50010"
+  #     HDFS_CONF_dfs_datanode_ipc___address: "0.0.0.0:50020"
+  #   depends_on:
+  #     hdfs-namenode:
+  #       condition: service_healthy
+  #   ports:
+  #     - "9864:9864"   # DataNode Web UI
+  #   volumes:
+  #     - hdfs_datanode_1:/hadoop/dfs/data
+  #   networks:
+  #     - minio_net
+  #
+  # # ─────────────────────────────────────────────
+  # # HDFS DataNode 2 — For replication
+  # # ─────────────────────────────────────────────
+  # hdfs-datanode-2:
+  #   image: bitnami/hadoop-datanode:3
+  #   container_name: hdfs_datanode_2
+  #   restart: unless-stopped
+  #   environment:
+  #     SERVICE_PRECONDITION: "hdfs-namenode:8020"
+  #     CORE_CONF_fs_defaultFS: "hdfs://hdfs-namenode:8020"
+  #     CORE_CONF_hadoop_http_staticuser_user_name: "root"
+  #     CORE_CONF_hadoop_proxyuser_root_groups: "*"
+  #     CORE_CONF_hadoop_proxyuser_root_hosts: "*"
+  #     HDFS_CONF_dfs_datanode_http___bind___host: "0.0.0.0"
+  #     HDFS_CONF_dfs_datanode_address: "0.0.0.0:50010"
+  #     HDFS_CONF_dfs_datanode_ipc___address: "0.0.0.0:50020"
+  #   depends_on:
+  #     hdfs-namenode:
+  #       condition: service_healthy
+  #   ports:
+  #     - "9865:9864"   # DataNode Web UI
+  #   volumes:
+  #     - hdfs_datanode_2:/hadoop/dfs/data
+  #   networks:
+  #     - minio_net
 
   # ─────────────────────────────────────────────
   # HDFS Init — Initialize directories and perms
   # ─────────────────────────────────────────────
-  hdfs-init:
-    image: bde2020/hadoop-base:2.0.0-hadoop3.3.4-java11
-    container_name: hdfs_init
-    restart: "no"
-    environment:
-      HADOOP_VERSION: "3.3.4"
-    depends_on:
-      hdfs-namenode:
-        condition: service_healthy
-      hdfs-datanode-1:
-        condition: service_started
-      hdfs-datanode-2:
-        condition: service_started
-    volumes:
-      - ./scripts/hdfs_init.sh:/hdfs_init.sh:ro
-    entrypoint: ["/bin/bash", "/hdfs_init.sh"]
-    networks:
-      - minio_net
+  # hdfs-init:
+  #   image: bitnami/hadoop-datanode:3
+  #   container_name: hdfs_init
+  #   restart: "no"
+  #   environment:
+  #     HADOOP_VERSION: "3.3.4"
+  #   depends_on:
+  #     hdfs-namenode:
+  #       condition: service_healthy
+  #     hdfs-datanode-1:
+  #       condition: service_started
+  #     hdfs-datanode-2:
+  #       condition: service_started
+  #   volumes:
+  #     - ./scripts/hdfs_init.sh:/hdfs_init.sh:ro
+  #   entrypoint: ["/bin/bash", "/hdfs_init.sh"]
+  #   networks:
+  #     - minio_net
 
   # 4. Workspace for EDA & Modeling
   jupyter:
@@ -220,7 +220,7 @@ services:
     volumes:
       - ./notebooks:/home/jovyan/work/notebooks
       - ./src:/home/jovyan/work/src
-      - jupyter_ivy_cache:/home/jovyan/.ivy2/cache
+      - spark_ivy_cache:/home/jovyan/.ivy2
     depends_on:
       - minio
       - spark-master
@@ -236,18 +236,21 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/app
-      - /app/.venv
-      - spark_ivy_cache:/root/.ivy2.5.2/cache
+      - venv_cache:/app/.venv
+      - spark_ivy_cache:/root/.ivy2
     env_file:
       - .env
     environment:
-      # Tells Python where to look for your modules (infrastructure, processing, etc.)
       - PYTHONPATH=/app
       - MINIO_ENDPOINT=http://minio:9000
       - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin}
-      - HDFS_NAMENODE=hdfs-namenode
+      # - HDFS_NAMENODE=hdfs-namenode
       - HDFS_PORT=8020
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minioadmin}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minioadmin}
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - MLFLOW_TRACKING_URI=http://mlflow_tracking:5000
       - PATH=/app/.venv/bin:$PATH
     networks:
       - minio_net
@@ -257,9 +260,58 @@ services:
         condition: service_healthy
       spark-master:
         condition: service_started
-      hdfs-namenode:
+      # hdfs-namenode:
+      #   condition: service_healthy
+      mlflow:
         condition: service_healthy
 
+  api:
+    image: demand-forecasting-pipeline:latest
+    container_name: resynor_api
+    profiles: ["tool"]
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - MLFLOW_TRACKING_URI=http://mlflow_tracking:5000
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minioadmin}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minioadmin}
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+    command: uv run uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    networks:
+      - minio_net
+    working_dir: /app
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.mlflow
+    container_name: mlflow_tracking
+    ports:
+      - "5000:5000"
+    environment:
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minioadmin}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minioadmin}
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////mlflow/mlflow.db --default-artifact-root s3://mlflow/ --allowed-hosts "localhost,localhost:5000,mlflow_tracking,mlflow_tracking:5000"
+    volumes:
+      - mlflow_data:/mlflow
+    depends_on:
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - minio_net
  
 volumes:
   minio_data:
@@ -267,13 +319,14 @@ volumes:
   kaggle_data:
     driver: local
   spark_ivy_cache:
-  jupyter_ivy_cache:
   hdfs_namenode:
     driver: local
   hdfs_datanode_1:
     driver: local
   hdfs_datanode_2:
     driver: local
+  venv_cache:
+  mlflow_data:
  
 networks:
   minio_net:

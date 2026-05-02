@@ -210,13 +210,14 @@ def parse_order_demand(df: DataFrame) -> DataFrame:
 
 def flag_demand_anomalies(df: DataFrame) -> DataFrame:
     """
-    Add boolean flag columns for downstream model awareness:
+    Add boolean flag columns and filter out negative demand rows:
       - is_negative_demand  : demand < 0  (returns / cancellations)
       - is_zero_demand      : demand == 0 (no-order days, pipeline gaps)
 
-    Rows are NOT dropped here — modelling teams may want to include or
-    exclude them based on the forecasting strategy.
+    Negative demand rows are dropped as they typically represent returns
+    or cancellations that can skew simple forecasting models.
     """
+    df = df.withColumn("is_negative_demand", F.col("Order_Demand") < 0)
     df = df.withColumn("is_zero_demand", F.col("Order_Demand") == 0)
 
     initial_count = df.count()
@@ -224,7 +225,7 @@ def flag_demand_anomalies(df: DataFrame) -> DataFrame:
     final_count = df_cleaned.count()
     dropped = initial_count - final_count
 
-    logger.info("CLEANING: Dropped %d negative/sentinel rows.", dropped)
+    logger.info("CLEANING: Dropped %d negative demand rows.", dropped)
     logger.info("VALID DATASET: %d rows (includes zeros).", final_count)
     return df_cleaned
 
@@ -553,5 +554,17 @@ def clean(df: DataFrame, cfg: dict) -> DataFrame:
 
     # ── Step 12 ──────────────────────────────────────────────────────────────
     log_quality_summary(df)
+
+    # ── Step 13 ──────────────────────────────────────────────────────────────
+    cols_to_drop = [
+        "date_parse_failed",
+        "demand_cast_failed",
+        "is_negative_demand",
+        "is_zero_demand",
+        "is_outlier",
+        "is_sparse_product",
+        "year_month",
+    ]
+    df = df.drop(*(c for c in cols_to_drop if c in df.columns))
 
     return df

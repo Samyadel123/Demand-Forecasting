@@ -18,7 +18,7 @@ spark:
 data:
   # MinIO / S3 source  (used when source = "minio")
   minio:
-    endpoint: "http://localhost:9000"
+    endpoint: "http://minio:9000"
     access_key: "minioadmin"
     secret_key: "minioadmin"
     bucket: "raw"
@@ -35,7 +35,7 @@ data:
     processed_path: "hdfs://namenode:8020/data/processed/demand_cleaned"
 
   # Choose "minio", "local", or "hdfs"
-  source: "local"
+  source: "minio"
   output_format: "parquet"     # parquet | csv | delta
 
 schema:

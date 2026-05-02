@@ -11,9 +11,16 @@ fast:
 clean:
 	docker compose run --rm pipeline_runner uv run python src/pipeline/cleaning_pipeline.py
 
-# Run the training pipeline
+# Run the training pipeline (includes feature engineering)
 train:
-	docker compose run --rm pipeline_runner uv run python src/pipeline/ml_pipeline.py
+	docker compose run --rm pipeline_runner uv run python src/pipeline/training_pipeline.py
+
+# Run the full end-to-end pipeline (cleaning -> training -> serve)
+pipeline: clean train serve
+
+# Start the FastAPI inference server
+serve:
+	docker compose up api
 
 # Check Hadoop/Spark configuration
 check:
