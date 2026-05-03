@@ -1,0 +1,10 @@
+FROM bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+
+# Add S3A / AWS / Jackson jars for Hadoop
+RUN mkdir -p /opt/hadoop/share/hadoop/tools/lib && \
+    cd /opt/hadoop/share/hadoop/tools/lib && \
+    curl -O https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.2.1/hadoop-aws-3.2.1.jar && \
+    curl -O https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.375/aws-java-sdk-bundle-1.11.375.jar && \
+    curl -O https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.9.10/jackson-databind-2.9.10.jar && \
+    curl -O https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.9.10/jackson-core-2.9.10.jar && \
+    curl -O https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.9.10/jackson-annotations-2.9.10.jar
